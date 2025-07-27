@@ -233,25 +233,39 @@ body.dark-mode #progress-bar {
   background: white;
   border: 2px solid #ccc;
   border-radius: 12px;
-  padding: 1rem;
+  padding: 1rem 2rem;  /* 좌우 여백 좀 더 줌 */
   font-size: 1.5rem;
   color: #333;
   font-weight: bold;
-  min-width: 200px;
-  max-width: max-content;
+  max-width: 600px;   /* 최대 넓이 제한 */
+  display: flex;      /* flex 컨테이너로 변경 */
+  justify-content: center;  /* 가운데 정렬 */
+  gap: 1rem;          /* 아이템 간 간격 */
   z-index: 100;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
+  box-sizing: border-box;
 }
+
 body.dark-mode .dday-box-bottom {
   background: #222;
   color: #fff;
   border: 2px solid #888;
 }
+
+/* 내부 div들(오늘 날짜, 디데이 박스) 스타일 통일 */
 .dday-box-bottom div {
-  display: inline-block;
-  margin: 0 10px;
+  background: inherit; /* 부모 배경 상속 */
+  border-radius: 8px;
+  padding: 0.8rem 1.2rem;
+  min-width: 160px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  font-weight: 700;
+  white-space: pre-line;
+  color: inherit;
 }
+
 
 /* ===== 부가 정보 텍스트 ===== */
 .sub-info {
