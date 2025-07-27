@@ -154,7 +154,7 @@ function updateDates() {
     const todayStr = formatDate(today);
     const dayName = getDayName(today);
     todayDiv.textContent = `오늘\n${todayStr} (${dayName})`;
-  }
+  } 
 
   function calcDday(targetDateStr) {
     const target = new Date(targetDateStr);
