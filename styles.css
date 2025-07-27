@@ -1,4 +1,4 @@
-
+/* ===== 기본 바디 스타일 ===== */
 body {
   margin: 0;
   font-family: 'Nanum Gothic', sans-serif;
@@ -8,26 +8,73 @@ body {
   font-weight: 500;
 }
 
+/* 다크모드 바디 스타일 */
+body.dark-mode {
+  background: #111;
+  color: #f0f0f0;
+}
+
+/* ===== 제목 스타일 ===== */
 h1 {
+  font-family: 'Orbitron', sans-serif;
   font-size: 4rem;
   margin: 2rem 0 1rem;
+  font-weight: 2000;
 }
-
 h2 {
+  font-family: 'Orbitron', sans-serif;
   font-size: 3rem;
   margin: 1rem 0;
+  font-weight: 2000;
 }
 
+/* ===== 업데이트 표시 스타일 ===== */
+.version-info {
+  position: fixed;
+  top: 5px;
+  left: 10px;
+  font-size: 12px;
+  color: #888;
+  font-family: 'Nanum Gothic', sans-serif;
+  opacity: 0.8;
+  z-index: 999;
+}
+
+/* ===== 각 화면 영역 (페이지 전환용 화면) ===== */
 .screen {
   display: none;
   padding: 2rem;
   min-height: 100vh;
 }
-
 .screen:not(.hidden) {
   display: block;
 }
 
+/* ===== 전체화면 전환용 버튼 ===== */
+.fullscreen-btn {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #f0f0f0;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 999;
+  opacity: 0.85;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.fullscreen-btn:hover {
+  opacity: 1;
+  background: #e0e0e0;
+}
+
+
+
+/* ===== 버튼 영역 컨테이너 (오렌지 버튼 감싸는 div) ===== */
 .button-container {
   display: flex;
   justify-content: center;
@@ -36,6 +83,7 @@ h2 {
   margin-top: 2rem;
 }
 
+/* ===== 오렌지 버튼 ===== */
 .orange-btn {
   background-color: orange;
   border: none;
@@ -47,74 +95,172 @@ h2 {
   cursor: pointer;
   transition: transform 0.2s ease;
 }
-
 .orange-btn:hover {
   transform: scale(1.1);
 }
-
-.notice-content {
-  text-align: center;
-  white-space: pre-wrap;
-  background: #fff;
-  padding: 2rem;
-  border: 2px solid #ccc;
-  border-radius: 12px;
-  font-size: 2rem;
-  line-height: 1.8;
-  height: 100%;
+.orange-btn.dark-mode {
+  background-color: #444;
+  color: white;
 }
 
-.timer-layout {
-  display: flex;
-  flex-direction: row;
-  height: 70vh;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
+/* ===== 타이머 숫자 크게 표시 ===== */
+.timer-huge {
+  font-size: 25rem;
+  font-weight: bold;
+  margin: 0.1rem 0 2rem;
+  position: relative;
 }
 
-.timer-left {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+/* ===== 타이머 및 일시정지 버튼 포지션 ===== */
+.timer-container {
+  position: relative;
 }
-
-.timer-right {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.centered-text {
-  text-align: center;
-}
-
-.back-btn {
+.pause-wrapper {
   position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 100;
+}
+#pause-btn {
+  font-size: 4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* ===== 진행 바 컨테이너 및 바 스타일 ===== */
+#progress-bar-container {
+  width: 80%;
+  height: 30px;
+  margin: 1rem auto;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ccc;
+  border: 2px solid #aaa;
+}
+#progress-bar {
+  height: 100%;
+  width: 0%;
+  background: orange;
+  transition: width 1s linear;
+}
+body.dark-mode #progress-bar-container {
+  background: #111;
+  border: 2px solid #fff;
+}
+body.dark-mode #progress-bar {
+  background: #fff;
+}
+
+/* ===== 상단 왼쪽 뒤로가기 버튼 ===== */
+.back-btn {
+  position: fixed;
   top: 1rem;
   left: 1rem;
   font-size: 2.5rem;
   background: none;
   border: none;
   cursor: pointer;
+  z-index: 1000;
+  transform: rotate(180deg);
+  color: inherit;
 }
 
-.timer {
-  font-size: 14rem;
-  font-weight: bold;
-  margin: 2rem 0;
+/* ===== 상단 오른쪽 다크모드 전환 버튼 ===== */
+.dark-mode-btn {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  font-size: 2.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1000;
+  color: inherit;
 }
 
-.sub-info {
+/* ===== 공지사항 영역 (제목 + 내용 레이아웃) ===== */
+.notice-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 0.5rem;
+}
+
+/* ===== 공지사항 제목 ===== */
+.notice-header h2 {
+  font-size: 3.2rem;
+  margin: 0.5rem 0 0;
+  font-weight: 1000;
+  text-align: center;
+}
+
+/* ===== 공지사항 레이아웃 박스 (본문 + D-day 박스 정렬용) ===== */
+.notice-layout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-top: 4rem;
+  flex-wrap: wrap;
+}
+
+/* ===== 공지사항 본문 박스 ===== */
+.notice-content {
+  margin: 0.1rem auto 0;
+  padding: 0.1rem 1rem;
   font-size: 2rem;
-  color: #555;
+  line-height: 1.6;
+  background: #fff;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  flex: 1;
+  white-space: pre-wrap;
+  box-sizing: border-box;
+}
+.notice-content.dark-mode {
+  background: #222;
+  border-color: #555;
+}
+
+/* ===== 하단 D-day 고정 박스 ===== */
+.dday-box-bottom {
+  position: sticky;
+  bottom: 20px;
+  margin: 2rem auto 0;
+  background: white;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  padding: 1rem;
+  font-size: 1.5rem;
+  color: #333;
+  font-weight: bold;
+  min-width: 200px;
+  max-width: max-content;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+body.dark-mode .dday-box-bottom {
+  background: #222;
+  color: #fff;
+  border: 2px solid #888;
+}
+.dday-box-bottom div {
+  display: inline-block;
+  margin: 0 10px;
+}
+
+/* ===== 부가 정보 텍스트 ===== */
+.sub-info {
+  font-size: 3rem;
+  color: #222;
   font-weight: bold;
 }
 
+/* ===== 타이머 종료 메시지 ===== */
 .timer-end {
   font-size: 5rem;
   font-weight: bold;
@@ -122,10 +268,12 @@ h2 {
   margin-top: 3rem;
 }
 
+/* ===== 숨김 처리 클래스 ===== */
 .hidden {
   display: none;
 }
 
+/* ===== 숫자 입력창 기본 스타일 ===== */
 input[type="number"] {
   font-size: 2rem;
   width: 100px;
@@ -133,12 +281,7 @@ input[type="number"] {
   text-align: center;
 }
 
-.timer-huge {
-  font-size: 20rem;
-  font-weight: bold;
-  margin: 3rem 0 2rem;
-}
-
+/* ===== 독해 테스트용 숫자 입력창 스타일 ===== */
 #reading-test input[type="number"] {
   font-size: 3rem;
   width: 150px;
@@ -149,14 +292,10 @@ input[type="number"] {
   font-size: 2.5rem;
 }
 
-.timer-huge {
-  font-size: 25rem;
-  font-weight: bold;
-  margin: 3rem 0 2rem;
+/* ===== 깜빡임 애니메이션 효과 ===== */
+.blink {
+  animation: blink-animation 1s steps(2, start) infinite;
 }
-
-#timer-subtext {
-  font-size: 2.5rem;
-  font-weight: bold;
-  line-height: 1.8;
+@keyframes blink-animation {
+  to { visibility: hidden; }
 }
