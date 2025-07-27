@@ -25,15 +25,32 @@ function showScreen(id) {
 
 // ================== 전체화면 전환 함수 ==================
 function toggleFullscreen() {
-  // F11 키 이벤트 생성 후 강제 실행
-  const f11Event = new KeyboardEvent('keydown', {
-    key: 'F11',
-    code: 'F11',
-    keyCode: 122,  // F11 키코드
-    which: 122,
-    bubbles: true
-  });
-  document.dispatchEvent(f11Event);
+  // 1. 현재 전체화면 상태 확인
+  const isFullscreen = document.fullscreenElement || 
+                      document.webkitFullscreenElement || 
+                      document.msFullscreenElement;
+
+  // 2. 전체화면 모드 전환
+  if (!isFullscreen) {
+    const elem = document.documentElement; // <html> 요소 선택
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen(); // 일반 브라우저
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen(); // Safari
+    } else if (elem.msRequestFullscreen) {
+      elem.msRequestFullscreen(); // IE/Edge 구버전
+    }
+  } 
+  // 3. 전체화면 해제
+  else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen(); // Safari
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen(); // IE/Edge 구버전
+    }
+  }
 }
 
 // ================== 뒤로가기 함수 ==================
