@@ -134,17 +134,51 @@ function toggleDarkMode() {
 }
 
 // ================== D-Day 계산 및 표시 함수 ==================
-function updateDday(targetId, examDateStr, label) {
-  const today = new Date();
-  const examDate = new Date(examDateStr);
-  const timeDiff = examDate - today;
-  const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-  document.getElementById(targetId).textContent = `[D-${daysLeft}] ${label}`;
+function formatDate(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
+
+function getDayName(date) {
+  const days = ['일', '월', '화', '수', '목', '금', '토'];
+  return days[date.getDay()];
+}
+
+function updateDates() {
+  const today = new Date();
+
+  const todayDiv = document.getElementById('today-date');
+  if (!todayDiv.textContent) {
+    const todayStr = formatDate(today);
+    const dayName = getDayName(today);
+    todayDiv.textContent = `오늘\n${todayStr} (${dayName})`;
+  }
+
+  function calcDday(targetDateStr) {
+    const target = new Date(targetDateStr);
+    target.setHours(0,0,0,0);
+    today.setHours(0,0,0,0);
+
+    const diffTime = target - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))- 1;
+    return diffDays;
+  }
+
+  const dday2026Date = '2025-11-13';
+  const dday2027Date = '2026-11-19';
+
+  document.getElementById('dday-2026').textContent = `[D-${calcDday(dday2026Date)}]\n26수능`;
+  document.getElementById('dday-2027').textContent = `[D-${calcDday(dday2027Date)}]\n27수능`;
+} 
+
+document.addEventListener("DOMContentLoaded", () => {
+  updateDates();
+});
 
 // ================== 페이지 로딩 시 D-Day 표시 ==================
 document.addEventListener("DOMContentLoaded", () => {
   updateDday("dday-2026", "2025-11-13", "26수능");
   updateDday("dday-2027", "2026-11-19", "27수능");
 });
-
