@@ -359,12 +359,12 @@ input[type="number"] {
 
   /* ✅ 타이머 숫자 크기 축소 */
   .timer-huge {
-    font-size: 4rem;
+    font-size: 5rem;
   }
 
   /* ✅ 일시정지/재시작 버튼 크기 & 위치 조정 */
   #pause-btn {
-    font-size: 1rem;
+    font-size: 1.5rem;
   }
 
   .pause-wrapper {
