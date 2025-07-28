@@ -81,6 +81,19 @@ function startTimer(seconds, title) {
 
   totalDuration = seconds;
   runTimer(seconds);
+
+
+  const now = new Date();
+  const end = new Date(now.getTime() + seconds * 1000);
+  const format = t => `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
+
+  const startSpan = document.getElementById('start-time');
+  const endSpan = document.getElementById('end-time');
+  startSpan.textContent = `시작 ${format(now)}`;
+  endSpan.textContent = `종료 ${format(end)}`;
+
+  totalDuration = seconds;
+  runTimer(seconds);
 }
 
 // ================== 독해 테스트 커스텀 타이머 시작 ==================
@@ -154,7 +167,7 @@ function updateDates() {
     const todayStr = formatDate(today);
     const dayName = getDayName(today);
     todayDiv.textContent = `오늘\n${todayStr} (${dayName})`;
-  } 
+  }
 
   function calcDday(targetDateStr) {
     const target = new Date(targetDateStr);
