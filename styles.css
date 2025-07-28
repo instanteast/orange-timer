@@ -313,3 +313,81 @@ input[type="number"] {
 @keyframes blink-animation {
   to { visibility: hidden; }
 }
+
+/* ===== 모바일 대응 반응형 스타일 (max-width: 768px 이하) ===== */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  .orange-btn {
+    width: 100px;
+    height: 100px;
+    font-size: 1rem;
+  }
+
+  .button-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .fullscreen-btn {
+    font-size: 12px;
+    padding: 4px 8px;
+    top: 5px;
+  }
+
+  .dark-mode-btn, .back-btn {
+    font-size: 2rem;
+    top: 0.5rem;
+  }
+
+  .timer-huge {
+    font-size: 10rem;
+  }
+
+  #pause-btn {
+    font-size: 3rem;
+  }
+
+  .notice-content {
+    font-size: 1.2rem;
+    padding: 0.5rem;
+  }
+
+  .dday-box-bottom {
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 1.2rem;
+    padding: 1rem;
+  }
+
+  .dday-box-bottom div {
+    min-width: auto;
+    font-size: 1rem;
+    padding: 0.6rem;
+  }
+
+  #reading-test input[type="number"] {
+    width: 100px;
+    height: 60px;
+    font-size: 2rem;
+  }
+
+  #reading-test label, #reading-test button {
+    font-size: 1.5rem;
+  }
+
+  .timer-end {
+    font-size: 3rem;
+  }
+
+  #progress-bar-container {
+    width: 95%;
+    height: 20px;
+  }
+}
