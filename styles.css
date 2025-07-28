@@ -282,6 +282,16 @@ body.dark-mode .dday-box-bottom {
   margin-top: 3rem;
 }
 
+/* ===== 타이머 시작/종료 시간 표시 ===== */
+.time-hint {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  margin: 0 auto 0.5rem;
+  font-size: 1.5rem;
+  color: gray;
+}
+
 /* ===== 숨김 처리 클래스 ===== */
 .hidden {
   display: none;
