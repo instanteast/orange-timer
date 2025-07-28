@@ -351,17 +351,25 @@ input[type="number"] {
     top: 5px;
   }
 
-  .dark-mode-btn, .back-btn {
+  .dark-mode-btn,
+  .back-btn {
     font-size: 2rem;
     top: 0.5rem;
   }
 
+  /* ✅ 타이머 숫자 크기 축소 */
   .timer-huge {
-    font-size: 10rem;
+    font-size: 6rem;
   }
 
+  /* ✅ 일시정지/재시작 버튼 크기 & 위치 조정 */
   #pause-btn {
-    font-size: 3rem;
+    font-size: 2.5rem;
+  }
+
+  .pause-wrapper {
+    bottom: 0.5rem;
+    right: 0.5rem;
   }
 
   .notice-content {
@@ -388,7 +396,8 @@ input[type="number"] {
     font-size: 2rem;
   }
 
-  #reading-test label, #reading-test button {
+  #reading-test label,
+  #reading-test button {
     font-size: 1.5rem;
   }
 
