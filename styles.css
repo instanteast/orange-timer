@@ -91,6 +91,7 @@ h2 {
   width: 140px;
   height: 140px;
   font-size: 1.5rem;
+  font-weight: bold;
   color: white;
   cursor: pointer;
   transition: transform 0.2s ease;
@@ -153,6 +154,44 @@ body.dark-mode #progress-bar {
   background: #fff;
 }
 
+/* ===== 공통 타이머/제목 테두리 ===== */
+.timer-decorated, .title-decorated {
+  border: 4px solid #ffa500; /* 기본 테두리 색상 */
+  border-radius: 20px;
+  padding: 1rem;
+  margin: 1rem auto;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); 
+  background: linear-gradient(145deg, #fff6e5, #ffe1b3);
+  width: fit-content;
+  display: inline-block;
+}
+
+body.dark-mode .timer-decorated, 
+body.dark-mode .title-decorated {
+  border-color: #ffaa33;
+  background: linear-gradient(145deg, #222, #333);
+  box-shadow: 0 8px 15px rgba(255, 165, 0, 0.3);
+  color: #fff;
+}
+
+/* ===== 독해 타이머 설정 테두리 ===== */
+#reading-test input[type="number"] {
+  font-size: 3rem;
+  width: 100px;
+  height: 80px;
+  margin: 1rem;
+  border: 5px solid #ffa500;   /* 테두리 추가 */
+  border-radius: 8px;           /* 둥근 테두리 */
+  box-sizing: border-box;
+  background: #fffbe6;          /* 배경색(선택) */
+}
+
+body.dark-mode #reading-test input[type="number"] {
+  border: 5px solid #ffaa33;
+  background: #222;
+  color: #fff;
+}
+
 /* ===== 상단 왼쪽 뒤로가기 버튼 ===== */
 .back-btn {
   position: fixed;
@@ -187,6 +226,7 @@ body.dark-mode #progress-bar {
   align-items: center;
   flex-direction: column;
   margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 /* ===== 공지사항 제목 ===== */
@@ -202,17 +242,17 @@ body.dark-mode #progress-bar {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  gap: 2rem;
-  margin-top: 4rem;
+  gap: 0rem;
+  margin-top: 0rem;
   flex-wrap: wrap;
 }
 
 /* ===== 공지사항 본문 박스 ===== */
 .notice-content {
-  margin: 0.1rem auto 0;
-  padding: 0.1rem 1rem;
+  margin: 0rem auto 0;
+  padding: 0rem 0rem;
   font-size: 2rem;
-  line-height: 1.6;
+  line-height: 1.2;
   background: #fff;
   border: 2px solid #ccc;
   border-radius: 12px;
@@ -230,48 +270,100 @@ body.dark-mode #progress-bar {
   position: sticky;
   bottom: 20px;
   margin: 2rem auto 0;
-  background: white;
-  border: 2px solid #ccc;
+  background: transparent;
+  border: 2px solid transparent;
   border-radius: 12px;
   padding: 1rem 2rem;  /* 좌우 여백 좀 더 줌 */
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   color: #333;
   font-weight: bold;
-  max-width: 600px;   /* 최대 넓이 제한 */
+  max-width: 1200px;   /* 최대 넓이 제한 */
+  height: 85px;
   display: flex;      /* flex 컨테이너로 변경 */
   justify-content: center;  /* 가운데 정렬 */
+  align-items: center;
   gap: 1rem;          /* 아이템 간 간격 */
   z-index: 100;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px transparent;
   text-align: center;
   box-sizing: border-box;
 }
 
 body.dark-mode .dday-box-bottom {
-  background: #222;
+  background: transparent;
   color: #fff;
-  border: 2px solid #888;
+  border: 2px solid transparent;
 }
 
 /* 내부 div들(오늘 날짜, 디데이 박스) 스타일 통일 */
 .dday-box-bottom div {
-  background: inherit; /* 부모 배경 상속 */
+  background: #fff; /* 부모 배경 상속 */
   border-radius: 8px;
+  border: 2px solid #555;
   padding: 0.8rem 1.2rem;
-  min-width: 160px;
+  min-width: 0; /* 최소 너비 0으로 설정 */
+  flex: 1 1 0; /* flex 아이템으로 설정 */
+  height: auto; /* 높이를 자동으로 조정 */
   box-sizing: border-box;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  font-weight: 700;
+  box-shadow: 0 1px 4px #555(255, 255, 255, 0.1);
+  font-weight: 600;
+  font-size: 1.5rem;
   white-space: pre-line;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: pre-wrap;
   color: inherit;
 }
 
+body.dark-mode .dday-box-bottom div {
+  background: #222; /* 부모 배경 상속 */
+  border-radius: 8px;
+  padding: 0.8rem 1.2rem;
+  min-width: 0; /* 최소 너비 0으로 설정 */
+  flex: 1 1 0; /* flex 아이템으로 설정 */
+  height: auto; /* 높이를 자동으로 조정 */
+  box-sizing: border-box;
+  box-shadow: 0 1px 4px rgb(255, 246, 246);
+  font-weight: 600;
+  font-size: 1.5rem;
+  white-space: pre-line;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: pre-wrap;
+  color: inherit;
+}
+
+/* ===== 글씨 강조 텍스트 ===== */
+.highlight {
+  color: #ff6600;
+  font-weight: bold;
+  background: #fffbe6;
+  padding: 0 4px;
+  border-radius: 4px;
+}
 
 /* ===== 부가 정보 텍스트 ===== */
-.sub-info {
-  font-size: 3rem;
+#timer-subtext {
+  display: inline-block;
+  font-size: 2.5rem;
   color: #222;
   font-weight: bold;
+  line-height: 1;
+  background: white;
+  border: 2px solid #ffa500;
+  border-radius: 12px;
+  padding: 0.7rem 1.5rem;    /* 상하, 좌우 여백 */
+  margin: 1.2rem 0;          /* 위아래 공간 */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+
+body.dark-mode #timer-subtext {
+  color: #fff;
+  background: #222;
+  border: 1px solid #555;
 }
 
 /* ===== 타이머 종료 메시지 ===== */
@@ -282,7 +374,6 @@ body.dark-mode .dday-box-bottom {
   margin-top: 3rem;
 }
 
-/* ===== 타이머 시작/종료 시간 표시 ===== */
 .time-hint {
   display: flex;
   justify-content: space-between;
@@ -324,6 +415,20 @@ input[type="number"] {
   to { visibility: hidden; }
 }
 
+/* ===== 오렌지 비 오는 효과 ===== */
+#orange-rain-container div {
+  will-change: top;
+  user-select: none;
+  pointer-events: none;
+  position: absolute;
+  animation: orange-rain-fall 2.5s linear forwards;
+}
+
+@keyframes orange-rain-fall {
+  0% { top: -10vh; }
+  100% { top: 100vh; }
+}
+
 /* ===== 모바일 대응 반응형 스타일 (max-width: 768px 이하) ===== */
 @media (max-width: 768px) {
   h1 {
@@ -351,25 +456,17 @@ input[type="number"] {
     top: 5px;
   }
 
-  .dark-mode-btn,
-  .back-btn {
+  .dark-mode-btn, .back-btn {
     font-size: 2rem;
     top: 0.5rem;
   }
 
-  /* ✅ 타이머 숫자 크기 축소 */
   .timer-huge {
-    font-size: 5rem;
+    font-size: 10rem;
   }
 
-  /* ✅ 일시정지/재시작 버튼 크기 & 위치 조정 */
   #pause-btn {
-    font-size: 1.5rem;
-  }
-
-  .pause-wrapper {
-    bottom: 0.5rem;
-    right: 0.5rem;
+    font-size: 3rem;
   }
 
   .notice-content {
@@ -396,8 +493,7 @@ input[type="number"] {
     font-size: 2rem;
   }
 
-  #reading-test label,
-  #reading-test button {
+  #reading-test label, #reading-test button {
     font-size: 1.5rem;
   }
 
@@ -409,4 +505,16 @@ input[type="number"] {
     width: 95%;
     height: 20px;
   }
+}
+
+/* 버튼 숨김 효과 */
+.hide-ui {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+/* 커서 숨김 효과 */
+.hide-cursor {
+  cursor: none !important;
 }
