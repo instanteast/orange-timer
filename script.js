@@ -269,14 +269,14 @@ document.addEventListener("DOMContentLoaded", () => {
 let uiHideTimeout;
 
 function showUI() {
-  document.querySelector('.back-btn')?.classList.remove('hide-ui');
+  document.querySelectorAll('.back-btn').forEach(btn => btn.classList.remove('hide-ui'));
   document.querySelector('.fullscreen-btn')?.classList.remove('hide-ui');
   document.querySelector('.dark-mode-btn')?.classList.remove('hide-ui');
   document.body.classList.remove('hide-cursor');
 }
 
 function hideUI() {
-  document.querySelector('.back-btn')?.classList.add('hide-ui');
+  document.querySelectorAll('.back-btn').forEach(btn => btn.classList.add('hide-ui'));
   document.querySelector('.fullscreen-btn')?.classList.add('hide-ui');
   document.querySelector('.dark-mode-btn')?.classList.add('hide-ui');
   document.body.classList.add('hide-cursor');
@@ -296,4 +296,5 @@ document.addEventListener('keydown', resetUIHideTimer);
 document.addEventListener('DOMContentLoaded', () => {
   resetUIHideTimer();
 });
+
 
