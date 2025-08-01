@@ -11,8 +11,13 @@ const fullNotice = `앞쪽부터 빈칸 없이 자리 채워서 앉아주세요.
 
 2. <b>OMR 수험번호는 010 제외하고 학생 전화번호</b> 적어주세요.
 
-3. <b>신규 학생</b>은 단어 시험 OMR 윗부분에 <b>신규</b>라고 적고, <b>이름, 학교</b>만 기입 후 시험지에 <b>아는 단어만 체크</b>해 주세요. 
-<b>신규는 재시험 없으니 편하게</b> 보세요.`;
+3. <b>신규 학생은 OMR 카드 윗부분에 '신규'라고 표기한 후 이름과 학교만 작성하시고, 아는 단어만 체크해 주세요. (재시험 없음)`;
+
+// ================== 단어 시험 공지사항 ==================// 
+const CutNotice = `1. <b>교재/ 컴퓨터 싸인펜/ 화이트</b>가 없는 학생은 <b>조교를 찾아주세요.</b><br>
+2. <b>OMR 수험번호는 010 제외하고 학생 전화번호</b> 적어주세요.<br>
+3. <b>신규 학생은 OMR 카드 윗부분에 '신규'라고 표기한 후 이름과 학교만 작성하시고, 아는 단어만 체크해 주세요. (재시험 없음)`;
+
 
 // 쉬는시간 문구
 const breakMsg = '복도에서 각자 자기 주간오렌지 가져가세요';
@@ -71,7 +76,7 @@ function startTimer(seconds, title) {
 
   let subText = '';
   if (title === '단어 테스트') {
-    subText = fullNotice;
+    subText = CutNotice;
   } else if (title === '쉬는 시간') {
     subText = breakMsg;
   } else {
@@ -169,7 +174,7 @@ function updateDates() {
     todayDiv.textContent = `오늘\n${todayStr} (${dayName})`;
   }
 
-  function calcDday(targetDateStr) {
+  function calcDday(targetDateStr) { 
     const target = new Date(targetDateStr);
     target.setHours(0,0,0,0);
     today.setHours(0,0,0,0);
@@ -179,19 +184,116 @@ function updateDates() {
     return diffDays;
   }
 
+  const ddaymockDate = '2025-09-03';
   const dday2026Date = '2025-11-13';
-  const dday2027Date = '2026-11-19';
 
-  document.getElementById('dday-2026').textContent = `[D-${calcDday(dday2026Date)}]\n26수능`;
-  document.getElementById('dday-2027').textContent = `[D-${calcDday(dday2027Date)}]\n27수능`;
-} 
+  document.getElementById('dday-mock').innerHTML = `<span class="highlight">9모</span><br> [D-${calcDday(ddaymockDate)}]`;
+  document.getElementById('dday-2026').innerHTML = `<span class="highlight">26수능</span><br> [D-${calcDday(dday2026Date)}]`;
 
+}
+
+// ====== 오렌지 비 이스터에그 ======
+let titleClickCount = 0;
+let rainActive = false;
+
+function createOrangeRain() {
+  if (rainActive) return;
+  rainActive = true;
+  const rainContainer = document.createElement('div');
+  rainContainer.id = 'orange-rain-container';
+  rainContainer.style.position = 'fixed';
+  rainContainer.style.top = 0;
+  rainContainer.style.left = 0;
+  rainContainer.style.width = '100vw';
+  rainContainer.style.height = '100vh';
+  rainContainer.style.pointerEvents = 'none';
+  rainContainer.style.zIndex = 9999;
+  document.body.appendChild(rainContainer);
+
+  const emojis = ['🍊'];
+  const rainCount = 40;
+
+  for (let i = 0; i < rainCount; i++) {
+    const drop = document.createElement('div');
+    drop.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    drop.style.position = 'absolute';
+    // 랜덤한 가로 위치 (0~98vw)
+    drop.style.left = `${Math.random() * 98}vw`;
+    // 랜덤한 세로 시작 위치 (화면 위쪽 밖)
+    drop.style.top = `-${Math.random() * 20 + 5}vh`;
+    drop.style.fontSize = `${Math.random() * 32 + 32}px`;
+    drop.style.opacity = Math.random() * 0.5 + 0.5;
+    // 랜덤한 애니메이션 지속시간 (2~3초)
+    const duration = 2 + Math.random();
+    // 랜덤한 시작 지연 (0~0.7초)
+    const delay = Math.random() * 0.7;
+    drop.style.transition = `top ${duration}s linear`;
+    drop.style.transitionDelay = `${delay}s`;
+    rainContainer.appendChild(drop);
+
+    setTimeout(() => {
+      drop.style.top = '100vh';
+    }, 50 + delay * 1000);
+
+    // 자동 제거
+    setTimeout(() => {
+      drop.remove();
+      if (i === rainCount - 1) {
+        rainActive = false;
+        if (rainContainer.parentNode) rainContainer.remove();
+      }
+    }, (duration + delay) * 1000 + 500);
+  }
+}
+
+// ================== 다크모드 시작시 변환 ==================
 document.addEventListener("DOMContentLoaded", () => {
   updateDates();
+  if (!document.body.classList.contains("dark-mode")) {
+    toggleDarkMode();
+  }
+
+  // 타이틀 클릭 이벤트 리스너
+  const title = document.querySelector('h1');
+  if (title) {
+    title.addEventListener('click', () => {
+      titleClickCount++;
+      if (titleClickCount === 5) {
+        createOrangeRain();
+        titleClickCount = 0;
+      }
+    });
+  }
 });
 
-// ================== 페이지 로딩 시 D-Day 표시 ==================
-document.addEventListener("DOMContentLoaded", () => {
-  updateDday("dday-2026", "2025-11-13", "26수능");
-  updateDday("dday-2027", "2026-11-19", "27수능");
+let uiHideTimeout;
+
+function showUI() {
+  document.querySelector('.back-btn')?.classList.remove('hide-ui');
+  document.querySelector('.fullscreen-btn')?.classList.remove('hide-ui');
+  document.querySelector('.dark-mode-btn')?.classList.remove('hide-ui');
+  document.body.classList.remove('hide-cursor');
+}
+
+function hideUI() {
+  document.querySelector('.back-btn')?.classList.add('hide-ui');
+  document.querySelector('.fullscreen-btn')?.classList.add('hide-ui');
+  document.querySelector('.dark-mode-btn')?.classList.add('hide-ui');
+  document.body.classList.add('hide-cursor');
+}
+
+function resetUIHideTimer() {
+  showUI();
+  clearTimeout(uiHideTimeout);
+  uiHideTimeout = setTimeout(hideUI, 2000); // 2초 후 숨김
+}
+
+document.addEventListener('mousemove', resetUIHideTimer);
+document.addEventListener('mousedown', resetUIHideTimer);
+document.addEventListener('keydown', resetUIHideTimer);
+
+// 최초 진입 시 타이머 시작
+document.addEventListener('DOMContentLoaded', () => {
+  resetUIHideTimer();
 });
+
