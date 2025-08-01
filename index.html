@@ -1,33 +1,29 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <!-- 페이지 문자 인코딩 및 반응형 설정 -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Orange English Timer</title>
 
-  <!-- 나눔고딕 폰트 불러오기 -->
+  <!-- 폰트 -->
   <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet" />
-  <!-- Orbitron 영어 폰트 불러오기 -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-  <!-- 외부 CSS 연결 -->
+  <!-- 외부 CSS -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 
-  <!-- 전체화면 전환 버튼 (가운데 상단) -->
-<button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ 전체화면</button>
-
-
 <body>
-  <!-- 다크모드 전환 버튼 (오른쪽 상단) -->
+  <!-- 다크모드 / 전체화면 버튼 -->
   <button id="dark-mode-toggle" onclick="toggleDarkMode()" class="dark-mode-btn">☾ </button>
+  <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ 전체화면</button>
 
-  <!-- 메인화면 (처음에 보이는 버튼들) -->
-  <div class="version-info">v1.3.0 | 2025-07-28</div>
+  <!-- 버전 정보 -->
+  <div class="version-info">v1.4.0 | 2025-08-01</div>
+
+  <!-- 메인 화면 -->
   <div id="main" class="screen">
     <h1>Orange English Timer</h1>
     <div class="button-container">
-      <!-- 각 버튼 클릭 시 해당 화면 또는 타이머 시작 -->
       <button class="orange-btn" onclick="showScreen('notice')">공지사항</button>
       <button class="orange-btn" onclick="startTimer(600, '단어 테스트')">단어 테스트</button>
       <button class="orange-btn" onclick="showScreen('reading-test')">독해 테스트</button>
@@ -38,15 +34,10 @@
 
   <!-- 공지사항 화면 -->
   <div id="notice" class="screen hidden" style="position: relative;">
-    <!-- 돌아가기 버튼 -->
     <button class="back-btn" onclick="goBack()">➤</button>
-
-    <!-- 공지 제목 -->
     <div class="notice-header">
       <h2>공지사항</h2>
     </div>
-
-    <!-- 공지 내용 -->
     <div class="notice-content centered-text">
       앞쪽부터 빈칸 없이 자리 채워서 앉아주세요.
       가운데 자리도 채워 앉기 때문에 가방이나 짐은 책상과 의자에 올려두지 말아 주세요.
@@ -55,15 +46,13 @@
 
       2. <b>OMR 수험번호는 010 제외하고 학생 전화번호</b> 적어주세요.
 
-      3. <b>신규 학생</b>은 단어 시험 OMR 윗부분에 <b>신규</b>라고 적고, <b>이름, 학교</b>만 기입 후 시험지에 <b>아는 단어만 체크</b>해 주세요. 
-      <b>신규는 재시험 없으니 편하게</b> 보세요.
+      3. <b>신규 학생</b>은 OMR 카드 윗부분에 <b>'신규'</b>라고 표기한 후 <b>이름과 학교</b>만 작성하시고, <b>아는 단어만 체크</b>해 주세요. <b>(재시험 없음)</b>
     </div>
 
-    <!-- D-Day 하단 고정 박스 -->
     <div class="dday-box-bottom">
       <div id="today-date" class="dday-item"></div>
+      <div id="dday-mock" class="dday-item"></div>
       <div id="dday-2026" class="dday-item"></div>
-      <div id="dday-2027" class="dday-item"></div>
     </div>
   </div>
 
@@ -71,8 +60,6 @@
   <div id="reading-test" class="screen hidden">
     <button class="back-btn" onclick="goBack()">➤</button>
     <h2>독해 테스트</h2>
-    
-    <!-- 시간 입력창 -->
     <label>시간 설정⌛(분:초) →
       <input type="number" id="minute" min="0" value="10" /> :
       <input type="number" id="second" min="0" value="0" />
@@ -83,35 +70,39 @@
   <!-- 타이머 화면 -->
   <div id="timer-screen" class="screen hidden">
     <button class="back-btn" onclick="goBack()">➤</button>
-    <h2 id="timer-title"></h2>
 
-    <!-- 타이머 표시 및 일시정지 버튼 -->
+    <!-- 타이머 제목 (테두리 추가됨) -->
+    <h2 id="timer-title" class="title-decorated"></h2>
+
+    <!-- 타이머 숫자 표시 (테두리 추가됨) -->
     <div class="timer-container">
-      <div class="timer timer-huge" id="timer-display">00:00</div>
+      <div class="timer timer-huge timer-decorated" id="timer-display">00:00</div>
       <div class="pause-wrapper">
         <button id="pause-btn" onclick="togglePause()">⏸</button>
       </div>
     </div>
-    <!-- 예상 시작/종료시간 표시 -->
+
+    <!-- 시작/종료 시간 -->
     <div class="time-hint">
       <span id="start-time"></span>
       <span id="end-time"></span>
     </div>
-    
-    <!-- 진행 바 -->
+
+    <!-- 진행바 -->
     <div id="progress-bar-container"><div id="progress-bar"></div></div>
 
-    <!-- 타이머 종료 메시지 -->
+    <!-- 종료 메시지 -->
     <div id="timer-end" class="timer-end hidden blink">끝났습니다.</div>
 
-    <!-- 타이머 하단 공지 텍스트 -->
+    <!-- 부가 텍스트 -->
     <div class="notice-content centered-text" id="timer-subtext"></div>
   </div>
 
-  <!-- 스크립트 연결 -->
+  <!-- JS -->
   <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
