@@ -180,7 +180,7 @@ function updateDates() {
     today.setHours(0,0,0,0);
 
     const diffTime = target - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))- 1;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   }
 
