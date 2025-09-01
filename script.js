@@ -69,6 +69,18 @@ function goBack() {
   document.getElementById('pause-btn').textContent = '⏸';
 }
 
+// ================== 미니 시계 ==================
+function updateMiniClock() {
+  const clock = document.getElementById('mini-clock');
+  if (!clock) return;
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2, '0');
+  const m = String(now.getMinutes()).padStart(2, '0');
+  clock.textContent = `${h}:${m}`;
+}
+setInterval(updateMiniClock, 1000);
+updateMiniClock();
+
 // ================== 타이머 시작 함수 ==================
 function startTimer(seconds, title) {
   showScreen('timer-screen');
