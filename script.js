@@ -187,7 +187,7 @@ function updateDates() {
   const ddaymockDate = '2025-09-03';
   const dday2026Date = '2025-11-13';
 
-  document.getElementById('dday-mock').innerHTML = `<span class="highlight">9모</span><br> [D-${calcDday(ddaymockDate)}]`;
+  document.getElementById('dday-mock').innerHTML = "🍊수능 대박 기원!🍊" + "<br>" + "오렌지t가 여러분을 응원합니다";
   document.getElementById('dday-2026').innerHTML = `<span class="highlight">26수능</span><br> [D-${calcDday(dday2026Date)}]`;
 
 }
