@@ -3,107 +3,123 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Orange English Timer</title>
+  <title>Orange English</title>
 
   <!-- 폰트 -->
-  <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;600;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
   <!-- 외부 CSS -->
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css" /> 
 </head>
 
 <body>
-  <!-- 다크모드 / 전체화면 버튼 -->
-  <button id="dark-mode-toggle" onclick="toggleDarkMode()" class="dark-mode-btn">☾ </button>
-  <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ 전체화면</button>
+  <!-- 상단 바 -->
+  <header class="topbar">
+    <button class="back-btn" onclick="goBack()" aria-label="뒤로 가기">➤</button>
+    <div class="topbar-title" aria-hidden="true">Orange English Timer</div>
+    <div class="topbar-actions">
+      <button id="dark-mode-toggle" onclick="toggleDarkMode()" class="dark-mode-btn" aria-label="다크 모드 전환">☾</button>
+      <button class="fullscreen-btn" onclick="toggleFullscreen()" aria-label="전체화면 전환">⛶</button>
+    </div>
+  </header>
 
   <!-- 버전 정보 -->
-  <div class="version-info">v1.4.2 | 2025-09-01</div>
+  <div class="version-info">v1.5.0 | 2025-09-05</div>
 
   <!-- 메인 화면 -->
   <div id="main" class="screen">
-    <h1>Orange English Timer</h1>
-    <div class="button-container">
-      <button class="orange-btn" onclick="showScreen('notice')">공지사항</button>
-      <button class="orange-btn" onclick="startTimer(600, '단어 테스트')">단어 테스트</button>
-      <button class="orange-btn" onclick="showScreen('reading-test')">독해 테스트</button>
-      <button class="orange-btn" onclick="startTimer(4200, 'SURVIVAL')">SURVIVAL</button>
-      <button class="orange-btn" onclick="startTimer(600, '쉬는 시간')">쉬는 시간</button>
+    <div class="container">
+      <h1>Orange English</h1>
+      <div class="button-container">
+        <button class="orange-btn" onclick="showScreen('notice')">공지사항</button>
+        <button class="orange-btn" onclick="startTimer(600, '단어 테스트')">단어 테스트</button>
+        <button class="orange-btn" onclick="showScreen('reading-test')">독해 테스트</button>
+        <button class="orange-btn" onclick="startTimer(4200, 'SURVIVAL')">SURVIVAL</button>
+        <button class="orange-btn" onclick="startTimer(600, '쉬는 시간')">쉬는 시간</button>
+      </div>
     </div>
   </div>
 
   <!-- 공지사항 화면 -->
-  <div id="notice" class="screen hidden" style="position: relative;">
-    <button class="back-btn" onclick="goBack()">➤</button>
-    <div class="notice-header">
-      <h2>공지사항</h2>
-    </div>
-    <div class="notice-content centered-text">
-      앞쪽부터 빈칸 없이 자리 채워서 앉아주세요.
-      가운데 자리도 채워 앉기 때문에 가방이나 짐은 책상과 의자에 올려두지 말아 주세요.
+  <div id="notice" class="screen hidden">
+    <div class="container">
+      <div class="notice-header">
+        <h2>공지사항</h2>
+      </div>
+      <div class="notice-content centered-text" role="region" aria-label="공지사항 내용">
+        앞쪽부터 빈칸 없이 자리 채워서 앉아주세요.
+        가운데 자리도 채워 앉기 때문에 가방이나 짐은 책상과 의자에 올려두지 말아 주세요.
 
-      1. <b>교재/ 컴퓨터 싸인펜/ 화이트</b>가 없는 학생은 <b>조교를 찾아주세요.</b>
+        1. <b>교재/ 컴퓨터 싸인펜/ 화이트</b>가 없는 학생은 <b>조교를 찾아주세요.</b>
 
-      2. <b>OMR 수험번호는 010 제외하고 학생 전화번호</b> 적어주세요.
+        2. <b>OMR 수험번호는 010 제외하고 학생 전화번호</b> 적어주세요.
 
-      3. <b>신규 학생</b>은 OMR 카드 윗부분에 <b>'신규'</b>라고 표기한 후 <b>이름과 학교</b>만 작성하시고, <b>아는 단어만 체크</b>해 주세요. <b>(재시험 없음)</b>
-    </div>
+        3. <b>신규 학생</b>은 OMR 카드 윗부분에 <b>'신규'</b>라고 표기한 후 <b>이름과 학교</b>만 작성하시고, <b>아는 단어만 체크</b>해 주세요. <b>(재시험 없음)</b>
+      </div>
 
-    <div class="dday-box-bottom">
-      <div id="today-date" class="dday-item"></div>
-      <div id="dday-2026" class="dday-item"></div>
-      <div id="dday-mock" class="dday-item"></div>
+      <div class="dday-box-bottom" role="group" aria-label="D-day 정보">
+        <div id="today-date" class="dday-item"></div>
+        <div id="dday-2026" class="dday-item"></div>
+        <div id="dday-mock" class="dday-item"></div>
+      </div>
     </div>
   </div>
 
   <!-- 독해 테스트 화면 -->
   <div id="reading-test" class="screen hidden">
-    <button class="back-btn" onclick="goBack()">➤</button>
-    <h2>독해 테스트</h2>
-    <label>시간 설정⌛ →
-      <input type="number" id="minute" min="0" value="10" /> :
-      <input type="number" id="second" min="0" value="0" />
-    </label>
-    <button onclick="startCustomTimer()">시작</button>
+    <div class="container">
+      <h2>독해 테스트</h2>
+      <div class="reading-controls">
+        <label class="reading-label">시간 설정 ⌛</label>
+        <div class="time-inputs">
+          <input type="number" id="minute" min="0" value="10" aria-label="분 입력" /> :
+          <input type="number" id="second" min="0" value="0" aria-label="초 입력" />
+        </div>
+        <button class="primary-btn" onclick="startCustomTimer()">시작</button>
+      </div>
+    </div>
   </div>
 
   <!-- 타이머 화면 -->
   <div id="timer-screen" class="screen hidden">
-    <button class="back-btn" onclick="goBack()">➤</button>
+    <div class="container">
+      <!-- 타이머 제목 (테두리 추가됨) -->
+      <h2 id="timer-title" class="title-decorated"></h2>
 
-    <!-- 타이머 제목 (테두리 추가됨) -->
-    <h2 id="timer-title" class="title-decorated"></h2>
-
-    <!-- 타이머 숫자 표시 (테두리 추가됨) -->
-    <div class="timer-container">
-      <div class="timer timer-huge timer-decorated" id="timer-display">00:00</div>
-      <div class="pause-wrapper">
-        <button id="pause-btn" onclick="togglePause()">⏸</button>
+      <!-- 타이머 숫자 표시 (테두리 추가됨) -->
+      <div class="timer-container">
+        <div class="timer timer-huge timer-decorated" id="timer-display" aria-live="polite">00:00</div>
+        <div class="pause-wrapper">
+          <button id="pause-btn" onclick="togglePause()" aria-label="일시정지/재생 전환">⏸</button>
+        </div>
       </div>
+
+      <!-- 시작/종료 시간 -->
+      <div class="time-hint" role="group" aria-label="시작 및 종료 시간">
+        <span id="start-time"></span>
+        <span id="end-time"></span>
+      </div>
+
+      <!-- 진행바 -->
+      <div id="progress-bar-container" aria-label="진행률">
+        <div id="progress-bar"></div>
+      </div>
+
+      <!-- 종료 메시지 -->
+      <div id="timer-end" class="timer-end hidden blink" role="status">끝났습니다.</div>
+
+      <!-- 부가 텍스트 -->
+      <div class="notice-content centered-text" id="timer-subtext"></div>
     </div>
-
-    <!-- 시작/종료 시간 -->
-    <div class="time-hint">
-      <span id="start-time"></span>
-      <span id="end-time"></span>
-    </div>
-
-    <!-- 진행바 -->
-    <div id="progress-bar-container"><div id="progress-bar"></div></div>
-
-    <!-- 종료 메시지 -->
-    <div id="timer-end" class="timer-end hidden blink">끝났습니다.</div>
-
-    <!-- 부가 텍스트 -->
-    <div class="notice-content centered-text" id="timer-subtext"></div>
   </div>
-    <!-- 오른쪽 아래 미니 시계 -->
-    <div id="mini-clock"></div>
+
+  <!-- 오른쪽 아래 미니 시계 -->
+  <div id="mini-clock" aria-live="polite" aria-label="현재 시각"></div>
+
   <!-- JS -->
   <script src="script.js"></script>
 </body>
 </html>
-
 
 
 
