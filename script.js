@@ -3,6 +3,7 @@ let timerInterval;        // 타이머 setInterval 저장용
 let totalDuration = 0;    // 전체 타이머 길이 (초)
 let isPaused = false;     // 일시정지 상태 여부
 
+
 // ================== 공지사항 전체 텍스트 ==================
 const fullNotice = `앞쪽부터 빈칸 없이 자리 채워서 앉아주세요.
 가운데 자리도 채워 앉기 때문에 가방이나 짐은 책상과 의자에 올려두지 말아 주세요.
@@ -18,7 +19,6 @@ const CutNotice = `1. <b>교재/ 컴퓨터 싸인펜/ 화이트</b>가 없는 �
 2. <b>OMR 수험번호는 010 제외하고 학생 전화번호</b> 적어주세요.<br>
 3. <b>신규 학생은 OMR 카드 윗부분에 '신규'라고 표기한 후 이름과 학교만 작성하시고, 아는 단어만 체크해 주세요. (재시험 없음)`;
 
-
 // 쉬는시간 문구
 const breakMsg = '복도에서 각자 자기 주간오렌지 가져가세요';
 
@@ -30,31 +30,19 @@ function showScreen(id) {
 
 // ================== 전체화면 전환 함수 ==================
 function toggleFullscreen() {
-  // 1. 현재 전체화면 상태 확인
   const isFullscreen = document.fullscreenElement || 
                       document.webkitFullscreenElement || 
                       document.msFullscreenElement;
 
-  // 2. 전체화면 모드 전환
   if (!isFullscreen) {
-    const elem = document.documentElement; // <html> 요소 선택
-    if (elem.requestFullscreen) {
-      elem.requestFullscreen(); // 일반 브라우저
-    } else if (elem.webkitRequestFullscreen) {
-      elem.webkitRequestFullscreen(); // Safari
-    } else if (elem.msRequestFullscreen) {
-      elem.msRequestFullscreen(); // IE/Edge 구버전
-    }
-  } 
-  // 3. 전체화면 해제
-  else {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen(); // Safari
-    } else if (document.msExitFullscreen) {
-      document.msExitFullscreen(); // IE/Edge 구버전
-    }
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) elem.requestFullscreen();
+    else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+    else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+  } else {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    else if (document.msExitFullscreen) document.msExitFullscreen();
   }
 }
 
@@ -66,7 +54,8 @@ function goBack() {
   document.getElementById('timer-end').classList.add('hidden');
   document.getElementById('progress-bar').style.width = "0%";
   isPaused = false;
-  document.getElementById('pause-btn').textContent = '⏸';
+  const pauseBtn = document.getElementById('pause-btn');
+  if (pauseBtn) pauseBtn.textContent = '⏸';
 }
 
 // ================== 미니 시계 ==================
@@ -88,43 +77,54 @@ function startTimer(seconds, title) {
 
   let subText = '';
   if (title === '단어 테스트') {
-    subText = CutNotice;
+    subText = '';
+    document.getElementById('timer-subtext').style.display = 'none';
   } else if (title === '쉬는 시간') {
     subText = breakMsg;
   } else {
     subText = 'OMR 수험번호는 010 제외하고 학생 전화번호 적어주세요.';
+    document.getElementById('timer-subtext').style.display = 'block';
   }
-  document.getElementById('timer-subtext').innerHTML = subText;
+  const subEl = document.getElementById('timer-subtext');
+  subEl.innerHTML = subText;
+  if (title === '단어 테스트') { subEl.classList.add('hidden'); } else { subEl.classList.remove('hidden'); }
 
   totalDuration = seconds;
-  runTimer(seconds);
 
+  // 타이머 화면이 보이고 난 뒤에 폰트 크기 조절
+  setTimeout(() => {
+    updateTimerDisplay(`${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`);
+  }, 10);
+
+  runTimer(seconds);
 
   const now = new Date();
   const end = new Date(now.getTime() + seconds * 1000);
   const format = t => `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
-
-  const startSpan = document.getElementById('start-time');
-  const endSpan = document.getElementById('end-time');
-  startSpan.textContent = `시작 ${format(now)}`;
-  endSpan.textContent = `종료 ${format(end)}`;
-
-  totalDuration = seconds;
-  runTimer(seconds);
+  document.getElementById('start-time').textContent = `시작 ${format(now)}`;
+  document.getElementById('end-time').textContent = `종료 ${format(end)}`;
 }
 
 // ================== 독해 테스트 커스텀 타이머 시작 ==================
 function startCustomTimer() {
-  const minutes = parseInt(document.getElementById('minute').value, 10);
-  const seconds = parseInt(document.getElementById('second').value, 10);
+  const minutes = parseInt(document.getElementById('minute').value, 10) || 0;
+  const seconds = parseInt(document.getElementById('second').value, 10) || 0;
   const total = (minutes * 60) + seconds;
   startTimer(total, '독해 테스트');
+}
+
+// ================== 타이머 숫자 표시 업데이트 함수 ==================
+function updateTimerDisplay(value, isDanger = false) {
+  const display = document.getElementById('timer-display');
+  display.textContent = value;
+  // 30초 이하일 때 색상만 빨간색으로 변경
+  display.style.color = isDanger ? '#d32f2f' : '';
+  fitTimerFontSize();
 }
 
 // ================== 실제 타이머 실행 로직 ==================
 function runTimer(duration) {
   let time = duration;
-  const display = document.getElementById('timer-display');
   document.getElementById('timer-end').classList.add('hidden');
   document.getElementById('progress-bar').style.width = "0%";
   clearInterval(timerInterval);
@@ -133,10 +133,14 @@ function runTimer(duration) {
     if (!isPaused) {
       const min = Math.floor(time / 60);
       const sec = time % 60;
-      display.textContent = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+      // 30초 이하일 때 색상 변경
+      updateTimerDisplay(
+        `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`,
+        time <= 30
+      );
 
       const percent = ((totalDuration - time) / totalDuration) * 100;
-      document.getElementById('progress-bar').style.width = `${percent}%`;
+      document.getElementById('progress-bar').style.width = `${Math.max(0, Math.min(100, percent))}%`;
 
       if (time <= 0) {
         clearInterval(timerInterval);
@@ -160,7 +164,7 @@ function toggleDarkMode() {
   const isDark = document.body.classList.toggle('dark-mode');
   document.querySelectorAll('.notice-content').forEach(el => el.classList.toggle('dark-mode'));
   document.querySelectorAll('.orange-btn').forEach(el => el.classList.toggle('dark-mode'));
-  document.getElementById('dark-mode-toggle').textContent = isDark ? '☀' : '☾ ';
+  document.getElementById('dark-mode-toggle').textContent = isDark ? '☀' : '☾';
 }
 
 // ================== D-Day 계산 및 표시 함수 ==================
@@ -180,7 +184,7 @@ function updateDates() {
   const today = new Date();
 
   const todayDiv = document.getElementById('today-date');
-  if (!todayDiv.textContent) {
+  if (todayDiv && !todayDiv.textContent) {
     const todayStr = formatDate(today);
     const dayName = getDayName(today);
     todayDiv.textContent = `오늘\n${todayStr} (${dayName})`;
@@ -189,9 +193,9 @@ function updateDates() {
   function calcDday(targetDateStr) { 
     const target = new Date(targetDateStr);
     target.setHours(0,0,0,0);
-    today.setHours(0,0,0,0);
-
-    const diffTime = target - today;
+    const base = new Date();
+    base.setHours(0,0,0,0);
+    const diffTime = target - base;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   }
@@ -199,17 +203,26 @@ function updateDates() {
   const ddaymockDate = '2025-09-03';
   const dday2026Date = '2025-11-13';
 
-  document.getElementById('dday-mock').innerHTML = "🍊수능 대박 기원!🍊" + "<br>" + "오렌지t가 여러분을 응원합니다";
-  document.getElementById('dday-2026').innerHTML = `<span class="highlight">26수능</span><br>[D-${calcDday(dday2026Date)}]`;
+  const mockEl = document.getElementById('dday-mock');
+  if (mockEl) mockEl.innerHTML = "🍊수능 대박 기원!🍊<br>오렌지t가 여러분을 응원합니다";
 
+  const suEl = document.getElementById('dday-2026');
+  if (suEl) suEl.innerHTML = `<span class="highlight">26수능</span><br>[D-${calcDday(dday2026Date)}]`;
 }
 
 // ====== 오렌지 비 이스터에그 ======
 let titleClickCount = 0;
 let rainActive = false;
 
+function getActiveScreenId() {
+  const active = document.querySelector('.screen:not(.hidden)');
+  return active ? active.id : null;
+}
+
 function createOrangeRain() {
   if (rainActive) return;
+  // 메인 화면에서만 활성화
+  if (getActiveScreenId() !== 'main') return;
   rainActive = true;
   const rainContainer = document.createElement('div');
   rainContainer.id = 'orange-rain-container';
@@ -229,25 +242,17 @@ function createOrangeRain() {
     const drop = document.createElement('div');
     drop.textContent = emojis[Math.floor(Math.random() * emojis.length)];
     drop.style.position = 'absolute';
-    // 랜덤한 가로 위치 (0~98vw)
     drop.style.left = `${Math.random() * 98}vw`;
-    // 랜덤한 세로 시작 위치 (화면 위쪽 밖)
     drop.style.top = `-${Math.random() * 20 + 5}vh`;
     drop.style.fontSize = `${Math.random() * 32 + 32}px`;
     drop.style.opacity = Math.random() * 0.5 + 0.5;
-    // 랜덤한 애니메이션 지속시간 (2~3초)
     const duration = 2 + Math.random();
-    // 랜덤한 시작 지연 (0~0.7초)
     const delay = Math.random() * 0.7;
     drop.style.transition = `top ${duration}s linear`;
     drop.style.transitionDelay = `${delay}s`;
     rainContainer.appendChild(drop);
 
-    setTimeout(() => {
-      drop.style.top = '100vh';
-    }, 50 + delay * 1000);
-
-    // 자동 제거
+    setTimeout(() => { drop.style.top = '100vh'; }, 50 + delay * 1000);
     setTimeout(() => {
       drop.remove();
       if (i === rainCount - 1) {
@@ -278,12 +283,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// ================== UI 자동 숨김 (타이머 화면에서만) ==================
 let uiHideTimeout;
-
 function showUI() {
   document.querySelectorAll('.back-btn').forEach(btn => btn.classList.remove('hide-ui'));
   document.querySelector('.fullscreen-btn')?.classList.remove('hide-ui');
   document.querySelector('.dark-mode-btn')?.classList.remove('hide-ui');
+  document.querySelector('.topbar')?.classList.remove('hide-ui');
   document.body.classList.remove('hide-cursor');
 }
 
@@ -291,22 +297,55 @@ function hideUI() {
   document.querySelectorAll('.back-btn').forEach(btn => btn.classList.add('hide-ui'));
   document.querySelector('.fullscreen-btn')?.classList.add('hide-ui');
   document.querySelector('.dark-mode-btn')?.classList.add('hide-ui');
+  document.querySelector('.topbar')?.classList.add('hide-ui');
   document.body.classList.add('hide-cursor');
 }
 
 function resetUIHideTimer() {
   showUI();
   clearTimeout(uiHideTimeout);
-  uiHideTimeout = setTimeout(hideUI, 2000); // 2초 후 숨김
+  // 2초 후 자동 숨김
+  uiHideTimeout = setTimeout(hideUI, 1200);
 }
 
 document.addEventListener('mousemove', resetUIHideTimer);
 document.addEventListener('mousedown', resetUIHideTimer);
 document.addEventListener('keydown', resetUIHideTimer);
 
-// 최초 진입 시 타이머 시작
 document.addEventListener('DOMContentLoaded', () => {
   resetUIHideTimer();
 });
+
+// ================== 타이머 폰트 크기 자동 조절 ==================
+function fitTimerFontSize() {
+  const box = document.querySelector('#timer-display.timer-decorated');
+  if (!box) return;
+
+  // 임시로 아주 큰 폰트로 설정
+  box.style.fontSize = '1000px';
+
+  // 박스와 텍스트 크기 측정
+  const boxWidth = box.clientWidth;
+  const boxHeight = box.clientHeight;
+  const textWidth = box.scrollWidth;
+  const textHeight = box.scrollHeight;
+
+  // 박스에 맞게 폰트 크기 계산 (상하좌우 여백 15%)
+  const horizontalPadding = boxWidth * 0.15;
+  const verticalPadding = boxHeight * 0.15;
+  const availableWidth = boxWidth - horizontalPadding * 2;
+  const availableHeight = boxHeight - verticalPadding * 2;
+
+  const widthRatio = availableWidth / textWidth;
+  const heightRatio = availableHeight / textHeight;
+  const ratio = Math.min(widthRatio, heightRatio);
+
+  // 실제 폰트 크기 적용
+  const newFontSize = 1000 * ratio;
+  box.style.fontSize = `${newFontSize}px`;
+}
+
+// 화면 크기 바뀔 때마다 폰트 크기 재조정
+window.addEventListener('resize', fitTimerFontSize);
 
 
