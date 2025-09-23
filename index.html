@@ -9,7 +9,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;600;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
   <!-- 외부 CSS -->
-  <link rel="stylesheet" href="styles.css" /> 
+  <link rel="stylesheet" href="styles.css" />
+  
+  <!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+<script>
+  // Firebase 설정 (방금 콘솔에서 받은 값)
+  const firebaseConfig = {
+    apiKey: "AIzaSyBc7Hzz82jAGDpYV4R63gmonwOb_yvs0UA",
+    authDomain: "orange-timer.firebaseapp.com",
+    projectId: "orange-timer",
+    storageBucket: "orange-timer.firebasestorage.app",
+    messagingSenderId: "612205534302",
+    appId: "1:612205534302:web:597de3540e1c810fd8a8cf",
+    measurementId: "G-0V30P7LQGH",
+    databaseURL: "https://orange-timer-default-rtdb.firebaseio.com"
+  };
+
+  // Firebase 초기화
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
 </head>
 
 <body>

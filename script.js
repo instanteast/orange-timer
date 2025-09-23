@@ -141,6 +141,10 @@ function startTimer(seconds, title) {
 
   // 종료 시간 저장
   localStorage.setItem("last_timer_end", end.toISOString());
+
+  // Firebase에 종료 시간 저장
+  db.ref("sharedTimer").set({
+    end: end.toISOString()})
 }
 
 // ================== 독해 테스트 커스텀 타이머 시작 ==================
@@ -358,6 +362,15 @@ document.addEventListener('keydown', resetUIHideTimer);
 
 document.addEventListener('DOMContentLoaded', () => {
   resetUIHideTimer();
+});
+
+// ================== Firebase에서 종료시간 실시간 반영 ==================
+db.ref("sharedTimer").on("value", (snapshot) => {
+  const data = snapshot.val();
+  if (data && data.end) {
+    localStorage.setItem("last_timer_end", data.end);
+    console.log("🔄 동기화된 종료시간:", data.end);
+  }
 });
 
 // ================== 타이머 폰트 크기 자동 조절 ==================
