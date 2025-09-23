@@ -229,7 +229,7 @@ function updateDates() {
   if (todayDiv && !todayDiv.textContent) {
     const todayStr = formatDate(today);
     const dayName = getDayName(today);
-    todayDiv.textContent = `오늘\\n${todayStr} (${dayName})`;
+    todayDiv.textContent = `오늘 ${todayStr} (${dayName})`;
   }
 
   function calcDday(targetDateStr) { 
