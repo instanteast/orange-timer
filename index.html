@@ -14,6 +14,7 @@
   <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script>
   // Firebase 설정 (방금 콘솔에서 받은 값)
   const firebaseConfig = {
@@ -30,6 +31,12 @@
   // Firebase 초기화
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
+
+  // ✅ Auth 참조 & 익명 로그인
+  const auth = firebase.auth();
+  auth.signInAnonymously()
+    .then(() => console.log("✅ Firebase 익명 로그인 성공"))
+    .catch(err => console.error("❌ Firebase 로그인 실패:", err));
 </script>
 </head>
 

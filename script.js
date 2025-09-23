@@ -404,36 +404,32 @@ function fitTimerFontSize() {
 
 
 // ================== 마지막 타이머 종료 10분 전 알람 설정 ==================
-function setAlarmFromLastTimer() {
-  const lastEnd = localStorage.getItem("last_timer_end");
-  if (!lastEnd) {
-    alert("최근 실행된 타이머가 없습니다.");
-    return;
-  }
+// ✅ NEW: 알람 트리거 공통 함수 (iOS/Android 분기)
+function triggerAlarm(endTime) {
+  // 종료 10분 전
+  const alarmTime = new Date(endTime.getTime() - 10 * 60 * 1000);
 
-  const endTime = new Date(lastEnd);
-  const alarmTime = new Date(endTime.getTime() - 10 * 60 * 1000); // 종료 10분 전
+  const pad = (n) => String(n).padStart(2, "0");
+  const yyyy = alarmTime.getFullYear();
+  const mm   = pad(alarmTime.getMonth() + 1);
+  const dd   = pad(alarmTime.getDate());
+  const hh   = pad(alarmTime.getHours());
+  const min  = pad(alarmTime.getMinutes());
 
-  const hours = alarmTime.getHours();
-  const minutes = alarmTime.getMinutes();
-
-  // OS 판별
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
   if (isIOS) {
-    // iOS: 캘린더 이벤트(.ics) 파일 다운로드
-    const pad = (n) => String(n).padStart(2, "0");
-    const yyyy = alarmTime.getFullYear();
-    const mm = pad(alarmTime.getMonth() + 1);
-    const dd = pad(alarmTime.getDate());
-    const hh = pad(hours);
-    const min = pad(minutes);
-
+    // iOS: 캘린더(.ics) 파일로 이벤트 추가 유도 (로컬 시간 사용)
     const dtStart = `${yyyy}${mm}${dd}T${hh}${min}00`;
-    const dtEnd = `${yyyy}${mm}${dd}T${pad(alarmTime.getHours()+1)}${min}00`; // 1시간짜리 이벤트
+    const endPlus1h = new Date(alarmTime.getTime());
+    endPlus1h.setHours(endPlus1h.getHours() + 1);
+    const hhEnd = pad(endPlus1h.getHours());
+    const minEnd = pad(endPlus1h.getMinutes());
+    const dtEnd = `${yyyy}${mm}${dd}T${hhEnd}${minEnd}00`;
 
     const icsContent = `BEGIN:VCALENDAR
     VERSION:2.0
+    PRODID:-//Orange English//Timer//KR
     BEGIN:VEVENT
     SUMMARY:⏰ 타이머 알람
     DTSTART:${dtStart}
@@ -444,21 +440,53 @@ function setAlarmFromLastTimer() {
 
     const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
     const url = URL.createObjectURL(blob);
-
     const a = document.createElement("a");
     a.href = url;
     a.download = "alarm.ics";
     a.click();
     URL.revokeObjectURL(url);
 
-    alert(`📅 iOS 캘린더에 ${hours}시 ${minutes}분 알람 이벤트를 추가하세요.`);
+    alert(`📅 iOS 캘린더에 ${parseInt(hh,10)}시 ${parseInt(min,10)}분 알람 이벤트를 추가하세요.`);
   } else {
-    // Android: Alarm intent
-    const intentUrl = `intent://alarm#Intent;scheme=clock;package=com.android.deskclock;S.hour=${hours};S.minutes=${minutes};end`;
-    alert(`⏰ 안드로이드 알람이 ${hours}시 ${minutes}분으로 설정됩니다.`);
-    window.location.href = intentUrl;
+    // Android: 알람 앱 인텐트 시도 (기기/OS별 동작 상이할 수 있음)
+    const intentUrl =
+      `intent://alarm#Intent;scheme=clock;package=com.android.deskclock;S.hour=${parseInt(hh,10)};S.minutes=${parseInt(min,10)};end`;
+    try {
+      window.location.href = intentUrl;
+      alert(`⏰ 안드로이드 알람을 ${parseInt(hh,10)}:${min}로 설정합니다.`);
+    } catch (e) {
+      alert(`⏰ ${parseInt(hh,10)}:${min}로 알람을 설정해주세요 (알람 앱 연동 실패).`);
+    }
   }
 }
+
+// ✅ UPDATED: 기기 간 동기화 보완 (localStorage 없으면 Firebase에서 즉시 조회)
+function setAlarmFromLastTimer() {
+  let lastEnd = localStorage.getItem("last_timer_end");
+
+  // 1) 로컬에 있으면 바로 사용
+  if (lastEnd) {
+    triggerAlarm(new Date(lastEnd));
+    return;
+  }
+
+  // 2) 로컬에 없으면 Firebase에서 1회 조회(fallback)
+  db.ref("sharedTimer").once("value")
+    .then((snapshot) => {
+      const data = snapshot.val();
+      if (data && data.end) {
+        localStorage.setItem("last_timer_end", data.end);
+        triggerAlarm(new Date(data.end));
+      } else {
+        alert("최근 실행된 타이머가 없습니다.");
+      }
+    })
+    .catch((err) => {
+      console.error("Firebase 읽기 오류:", err);
+      alert("네트워크 또는 서버 오류로 알람을 불러오지 못했습니다.");
+    });
+}
+
 
 // 화면 크기 바뀔 때마다 폰트 크기 재조정
 window.addEventListener('resize', fitTimerFontSize);
