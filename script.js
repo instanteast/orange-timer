@@ -3,16 +3,16 @@ let timerInterval;        // 타이머 setInterval 저장용
 let totalDuration = 0;    // 전체 타이머 길이 (초)
 let isPaused = false;     // 일시정지 상태 여부
 
-
-// ================== 공지사항 전체 텍스트 ==================
-const fullNotice = `앞쪽부터 빈칸 없이 자리 채워서 앉아주세요.
+// ================== 공지 저장 키/기본값 ==================
+const NOTICE_STORAGE_KEY = 'oe_notice_html_v1';
+const defaultNotice = `앞쪽부터 빈칸 없이 자리 채워서 앉아주세요.
 가운데 자리도 채워 앉기 때문에 가방이나 짐은 책상과 의자에 올려두지 말아 주세요.
 
 1. <b>교재/ 컴퓨터 싸인펜/ 화이트</b>가 없는 학생은 <b>조교를 찾아주세요.</b>
 
 2. <b>OMR 수험번호는 010 제외하고 학생 전화번호</b> 적어주세요.
 
-3. <b>신규 학생은 OMR 카드 윗부분에 '신규'라고 표기한 후 이름과 학교만 작성하시고, 아는 단어만 체크해 주세요. (재시험 없음)`;
+3. <b>신규 학생</b>은 OMR 카드 윗부분에 <b>'신규'</b>라고 표기한 후 <b>이름과 학교</b>만 작성하시고, <b>아는 단어만 체크</b>해 주세요. <b>(재시험 없음)</b>`;
 
 // ================== 단어 시험 공지사항 ==================// 
 const CutNotice = `1. <b>교재/ 컴퓨터 싸인펜/ 화이트</b>가 없는 학생은 <b>조교를 찾아주세요.</b><br>
@@ -22,10 +22,45 @@ const CutNotice = `1. <b>교재/ 컴퓨터 싸인펜/ 화이트</b>가 없는 �
 // 쉬는시간 문구
 const breakMsg = '복도에서 각자 자기 주간오렌지 가져가세요';
 
+// ================== 공지 저장/로드 유틸 ==================
+function getSavedNotice() {
+  return localStorage.getItem(NOTICE_STORAGE_KEY) || defaultNotice;
+}
+function setSavedNotice(html) {
+  localStorage.setItem(NOTICE_STORAGE_KEY, html);
+}
+function renderNotice() {
+  const el = document.getElementById('notice-content');
+  if (el) el.innerHTML = getSavedNotice();
+}
+
 // ================== 화면 전환 함수 ==================
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
+
+  // 화면 진입 시 필요한 초기화
+  if (id === 'notice') {
+    renderNotice();
+  } else if (id === 'notice-editor') {
+    // 현재 저장된 공지를 textarea에 채워 넣기 (HTML 그대로 편집 가능)
+    const ta = document.getElementById('notice-editor-text');
+    if (ta) ta.value = getSavedNotice();
+  }
+}
+
+// ================== 공지 편집 액션 ==================
+function saveNotice() {
+  const ta = document.getElementById('notice-editor-text');
+  if (!ta) return;
+  const value = ta.value.trim();
+  // 빈 값 저장 방지: 비면 기본값으로
+  setSavedNotice(value || defaultNotice);
+  renderNotice();
+  showScreen('notice');
+}
+function cancelEdit() {
+  showScreen('main');
 }
 
 // ================== 전체화면 전환 함수 ==================
@@ -103,6 +138,9 @@ function startTimer(seconds, title) {
   const format = t => `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
   document.getElementById('start-time').textContent = `시작 ${format(now)}`;
   document.getElementById('end-time').textContent = `종료 ${format(end)}`;
+
+  // 종료 시간 저장
+  localStorage.setItem("last_timer_end", end.toISOString());
 }
 
 // ================== 독해 테스트 커스텀 타이머 시작 ==================
@@ -187,7 +225,7 @@ function updateDates() {
   if (todayDiv && !todayDiv.textContent) {
     const todayStr = formatDate(today);
     const dayName = getDayName(today);
-    todayDiv.textContent = `오늘\n${todayStr} (${dayName})`;
+    todayDiv.textContent = `오늘\\n${todayStr} (${dayName})`;
   }
 
   function calcDday(targetDateStr) { 
@@ -265,6 +303,12 @@ function createOrangeRain() {
 
 // ================== 다크모드 시작시 변환 ==================
 document.addEventListener("DOMContentLoaded", () => {
+  // 초기 공지 세팅 (최초 1회만)
+  if (!localStorage.getItem(NOTICE_STORAGE_KEY)) {
+    setSavedNotice(defaultNotice);
+  }
+  renderNotice();
+
   updateDates();
   if (!document.body.classList.contains("dark-mode")) {
     toggleDarkMode();
@@ -343,6 +387,64 @@ function fitTimerFontSize() {
   // 실제 폰트 크기 적용
   const newFontSize = 1000 * ratio;
   box.style.fontSize = `${newFontSize}px`;
+}
+
+
+// ================== 마지막 타이머 종료 10분 전 알람 설정 ==================
+function setAlarmFromLastTimer() {
+  const lastEnd = localStorage.getItem("last_timer_end");
+  if (!lastEnd) {
+    alert("최근 실행된 타이머가 없습니다.");
+    return;
+  }
+
+  const endTime = new Date(lastEnd);
+  const alarmTime = new Date(endTime.getTime() - 10 * 60 * 1000); // 종료 10분 전
+
+  const hours = alarmTime.getHours();
+  const minutes = alarmTime.getMinutes();
+
+  // OS 판별
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  if (isIOS) {
+    // iOS: 캘린더 이벤트(.ics) 파일 다운로드
+    const pad = (n) => String(n).padStart(2, "0");
+    const yyyy = alarmTime.getFullYear();
+    const mm = pad(alarmTime.getMonth() + 1);
+    const dd = pad(alarmTime.getDate());
+    const hh = pad(hours);
+    const min = pad(minutes);
+
+    const dtStart = `${yyyy}${mm}${dd}T${hh}${min}00`;
+    const dtEnd = `${yyyy}${mm}${dd}T${pad(alarmTime.getHours()+1)}${min}00`; // 1시간짜리 이벤트
+
+    const icsContent = `BEGIN:VCALENDAR
+    VERSION:2.0
+    BEGIN:VEVENT
+    SUMMARY:⏰ 타이머 알람
+    DTSTART:${dtStart}
+    DTEND:${dtEnd}
+    DESCRIPTION:Orange English 타이머 종료 10분 전 알람
+    END:VEVENT
+    END:VCALENDAR`;
+
+    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "alarm.ics";
+    a.click();
+    URL.revokeObjectURL(url);
+
+    alert(`📅 iOS 캘린더에 ${hours}시 ${minutes}분 알람 이벤트를 추가하세요.`);
+  } else {
+    // Android: Alarm intent
+    const intentUrl = `intent://alarm#Intent;scheme=clock;package=com.android.deskclock;S.hour=${hours};S.minutes=${minutes};end`;
+    alert(`⏰ 안드로이드 알람이 ${hours}시 ${minutes}분으로 설정됩니다.`);
+    window.location.href = intentUrl;
+  }
 }
 
 // 화면 크기 바뀔 때마다 폰트 크기 재조정

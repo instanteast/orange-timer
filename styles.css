@@ -425,6 +425,43 @@ input[type="number"] {
   cursor: pointer;
   box-shadow: var(--shadow);
 }
+.secondary-btn {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: clamp(18px, 3.4vw, 22px);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ===== 공지 편집기 ===== */
+.notice-textarea {
+  width: 100%;
+  min-height: 50vh;
+  padding: 12px 14px;
+  font-size: clamp(16px, 2.6vw, 20px);
+  line-height: 1.5;
+  border: 2px solid var(--brand);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  box-sizing: border-box;
+  resize: vertical;
+  white-space: pre-wrap;
+}
+.editor-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 12px;
+}
+.editor-help {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
 
 /* ===== 기타 ===== */
 .hidden { display: none; }

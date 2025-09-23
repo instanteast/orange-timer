@@ -24,7 +24,7 @@
   </header>
 
   <!-- 버전 정보 -->
-  <div class="version-info">v1.5.0 | 2025-09-05</div>
+  <div class="version-info">v1.6.0 | 2025-09-23</div>
 
   <!-- 메인 화면 -->
   <div id="main" class="screen">
@@ -36,6 +36,8 @@
         <button class="orange-btn" onclick="showScreen('reading-test')">독해 테스트</button>
         <button class="orange-btn" onclick="startTimer(4200, 'SURVIVAL')">SURVIVAL</button>
         <button class="orange-btn" onclick="startTimer(600, '쉬는 시간')">쉬는 시간</button>
+        <button class="orange-btn" onclick="setAlarmFromLastTimer()">⏰ 알람 맞추기</button>
+        <button class="orange-btn" onclick="showScreen('notice-editor')">공지 편집</button>
       </div>
     </div>
   </div>
@@ -46,21 +48,27 @@
       <div class="notice-header">
         <h2>공지사항</h2>
       </div>
-      <div class="notice-content centered-text" role="region" aria-label="공지사항 내용">
-        앞쪽부터 빈칸 없이 자리 채워서 앉아주세요.
-        가운데 자리도 채워 앉기 때문에 가방이나 짐은 책상과 의자에 올려두지 말아 주세요.
-
-        1. <b>교재/ 컴퓨터 싸인펜/ 화이트</b>가 없는 학생은 <b>조교를 찾아주세요.</b>
-
-        2. <b>OMR 수험번호는 010 제외하고 학생 전화번호</b> 적어주세요.
-
-        3. <b>신규 학생</b>은 OMR 카드 윗부분에 <b>'신규'</b>라고 표기한 후 <b>이름과 학교</b>만 작성하시고, <b>아는 단어만 체크</b>해 주세요. <b>(재시험 없음)</b>
+      <div id="notice-content" class="notice-content centered-text" role="region" aria-label="공지사항 내용">
+        <!-- JS에서 저장된 공지 불러와 표시합니다. -->
       </div>
 
       <div class="dday-box-bottom" role="group" aria-label="D-day 정보">
         <div id="today-date" class="dday-item"></div>
         <div id="dday-2026" class="dday-item"></div>
         <div id="dday-mock" class="dday-item"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 공지 편집 화면 -->
+  <div id="notice-editor" class="screen hidden">
+    <div class="container">
+      <h2>공지 편집</h2>
+      <div class="editor-help">줄바꿈은 자동으로 적용됩니다. 굵게 표시하려면 &lt;b&gt;굵게&lt;/b&gt;처럼 입력할 수 있어요.</div>
+      <textarea id="notice-editor-text" class="notice-textarea" aria-label="공지사항 편집 영역" spellcheck="false"></textarea>
+      <div class="editor-actions">
+        <button class="primary-btn" onclick="saveNotice()">저장</button>
+        <button class="secondary-btn" onclick="cancelEdit()">취소</button>
       </div>
     </div>
   </div>
@@ -118,6 +126,14 @@
 
   <!-- JS -->
   <script src="script.js"></script>
+
+  <script>
+ if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js")
+    .then(() => console.log("✅ Service Worker registered"))
+    .catch(err => console.error("SW registration failed:", err));
+ }
+</script>
 </body>
 </html>
 
