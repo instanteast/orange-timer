@@ -160,7 +160,7 @@ function updateTimerDisplay(value, isDanger = false) {
   const display = document.getElementById('timer-display');
   display.textContent = value;
   // 30초 이하일 때 색상만 빨간색으로 변경
-  display.style.color = isDanger ? '#d32f2f' : '';
+  display.style.color = isDanger ? '#ff9b30' : '';
   fitTimerFontSize();
 }
 
