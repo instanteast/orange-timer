@@ -14,7 +14,7 @@ const defaultNotice = `앞쪽부터 빈칸 없이 자리 채워서 앉아주세�
 
 3. <b>신규 학생</b>은 OMR 카드 윗부분에 <b>'신규'</b>라고 표기한 후 <b>이름과 학교</b>만 작성하시고, <b>아는 단어만 체크</b>해 주세요. <b>(재시험 없음)</b>`;
 
-// ================== 단어 시험 공지사항 ==================// 
+// ================== 단어 시험 공지사항 ==================
 const CutNotice = `1. <b>교재/ 컴퓨터 싸인펜/ 화이트</b>가 없는 학생은 <b>조교를 찾아주세요.</b><br>
 2. <b>OMR 수험번호는 010 제외하고 학생 전화번호</b> 적어주세요.<br>
 3. <b>신규 학생은 OMR 카드 윗부분에 '신규'라고 표기한 후 이름과 학교만 작성하시고, 아는 단어만 체크해 주세요. (재시험 없음)`;
@@ -43,9 +43,13 @@ function showScreen(id) {
   if (id === 'notice') {
     renderNotice();
   } else if (id === 'notice-editor') {
-    // 현재 저장된 공지를 textarea에 채워 넣기 (HTML 그대로 편집 가능)
     const ta = document.getElementById('notice-editor-text');
     if (ta) ta.value = getSavedNotice();
+  }
+
+  // ✅ 메인 화면이 아닐 때 자동 전체화면
+  if (id !== 'main' && !document.fullscreenElement) {
+    toggleFullscreen();
   }
 }
 
@@ -54,7 +58,6 @@ function saveNotice() {
   const ta = document.getElementById('notice-editor-text');
   if (!ta) return;
   const value = ta.value.trim();
-  // 빈 값 저장 방지: 비면 기본값으로
   setSavedNotice(value || defaultNotice);
   renderNotice();
   showScreen('notice');
@@ -89,8 +92,18 @@ function goBack() {
   document.getElementById('timer-end').classList.add('hidden');
   document.getElementById('progress-bar').style.width = "0%";
   isPaused = false;
+
   const pauseBtn = document.getElementById('pause-btn');
   if (pauseBtn) pauseBtn.textContent = '⏸';
+
+  // ✅ 오버레이 완전히 숨김
+  const overlay = document.getElementById('end-overlay');
+  if (overlay) {
+    overlay.classList.add('hidden');           // 다시 안 보이게
+    overlay.classList.remove('timer-end-overlay'); // 스타일도 제거
+    overlay.textContent = "";                  // 텍스트도 비워두기
+  }
+
 }
 
 // ================== 미니 시계 ==================
@@ -126,7 +139,6 @@ function startTimer(seconds, title) {
 
   totalDuration = seconds;
 
-  // 타이머 화면이 보이고 난 뒤에 폰트 크기 조절
   setTimeout(() => {
     updateTimerDisplay(`${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`);
   }, 10);
@@ -139,12 +151,12 @@ function startTimer(seconds, title) {
   document.getElementById('start-time').textContent = `시작 ${format(now)}`;
   document.getElementById('end-time').textContent = `종료 ${format(end)}`;
 
-  // 종료 시간 저장
+  // ✅ 종료시각 기반 세션 복구 저장
   localStorage.setItem("last_timer_end", end.toISOString());
+  localStorage.setItem("last_timer_title", title);
 
   // Firebase에 종료 시간 저장
-  db.ref("sharedTimer").set({
-    end: end.toISOString()})
+  db.ref("sharedTimer").set({ end: end.toISOString() });
 }
 
 // ================== 독해 테스트 커스텀 타이머 시작 ==================
@@ -159,7 +171,6 @@ function startCustomTimer() {
 function updateTimerDisplay(value, isDanger = false) {
   const display = document.getElementById('timer-display');
   display.textContent = value;
-  // 30초 이하일 때 색상만 빨간색으로 변경
   display.style.color = isDanger ? '#ff9b30' : '';
   fitTimerFontSize();
 }
@@ -175,7 +186,8 @@ function runTimer(duration) {
     if (!isPaused) {
       const min = Math.floor(time / 60);
       const sec = time % 60;
-      // 30초 이하일 때 색상 변경
+
+      // 원래 로직: 30초 이하일 때 글자색 주황 (updateTimerDisplay 내부에서 처리)
       updateTimerDisplay(
         `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`,
         time <= 30
@@ -184,16 +196,37 @@ function runTimer(duration) {
       const percent = ((totalDuration - time) / totalDuration) * 100;
       document.getElementById('progress-bar').style.width = `${Math.max(0, Math.min(100, percent))}%`;
 
+      // 종료 처리
       if (time <= 0) {
         clearInterval(timerInterval);
         document.getElementById('timer-end').classList.remove('hidden');
         document.getElementById('progress-bar').style.width = "100%";
+
+        // ✅ 종료 오버레이는 여기서만
+        const overlay = document.getElementById('end-overlay');
+        if (overlay) {
+          overlay.textContent = "⏰ 끝났습니다!";
+          overlay.classList.remove('hidden');
+          overlay.classList.add('timer-end-overlay');
+        }
+        return;
+      }
+
+      // ================== 시각 효과 ==================
+      const displayBox = document.getElementById('timer-display');
+
+      // 10초 이하일 때만 테두리 펄스
+      if (time <= 10) {
+        displayBox.classList.add('pulse');
+      } else {
+        displayBox.classList.remove('pulse');
       }
 
       time--;
     }
   }, 1000);
 }
+
 
 // ================== 일시정지 / 재시작 버튼 토글 ==================
 function togglePause() {
@@ -242,9 +275,7 @@ function updateDates() {
     return diffDays;
   }
 
-  const ddaymockDate = '2025-09-03';
   const dday2026Date = '2025-11-13';
-
   const mockEl = document.getElementById('dday-mock');
   if (mockEl) mockEl.innerHTML = "🍊수능 대박 기원!🍊<br>오렌지t가 여러분을 응원합니다";
 
@@ -255,15 +286,12 @@ function updateDates() {
 // ====== 오렌지 비 이스터에그 ======
 let titleClickCount = 0;
 let rainActive = false;
-
 function getActiveScreenId() {
   const active = document.querySelector('.screen:not(.hidden)');
   return active ? active.id : null;
 }
-
 function createOrangeRain() {
   if (rainActive) return;
-  // 메인 화면에서만 활성화
   if (getActiveScreenId() !== 'main') return;
   rainActive = true;
   const rainContainer = document.createElement('div');
@@ -305,20 +333,31 @@ function createOrangeRain() {
   }
 }
 
-// ================== 다크모드 시작시 변환 ==================
+// ================== DOMContentLoaded ==================
 document.addEventListener("DOMContentLoaded", () => {
-  // 초기 공지 세팅 (최초 1회만)
+  // 키보드 단축키
+  document.addEventListener('keydown', (e) => {
+    const tag = e.target.tagName.toLowerCase();
+    if (tag === 'input' || tag === 'textarea') return;
+    switch (e.code) {
+      case 'Space': e.preventDefault(); togglePause(); break;
+      case 'Escape': goBack(); break;
+      case 'Digit1': startTimer(600, '단어 테스트'); break;
+      case 'Digit2': startTimer(4200, 'SURVIVAL'); break;
+      case 'Digit3': startTimer(600, '쉬는 시간'); break;
+      case 'KeyF': toggleFullscreen(); break;
+    }
+  });
+
   if (!localStorage.getItem(NOTICE_STORAGE_KEY)) {
     setSavedNotice(defaultNotice);
   }
   renderNotice();
-
   updateDates();
   if (!document.body.classList.contains("dark-mode")) {
     toggleDarkMode();
   }
 
-  // 타이틀 클릭 이벤트 리스너
   const title = document.querySelector('h1');
   if (title) {
     title.addEventListener('click', () => {
@@ -329,9 +368,30 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  resetUIHideTimer();
 });
 
-// ================== UI 자동 숨김 (타이머 화면에서만) ==================
+// ================== 세션 복구 ==================
+document.addEventListener('DOMContentLoaded', () => {
+  const endStr = localStorage.getItem('last_timer_end');
+  const title = localStorage.getItem('last_timer_title');
+  if (endStr && title) {
+    const endTime = new Date(endStr);
+    const now = new Date();
+    let remain = Math.floor((endTime.getTime() - now.getTime()) / 1000);
+    if (remain > 0) {
+      if (confirm(`마지막 타이머(${title}, 남은 ${Math.floor(remain/60)}분 ${remain%60}초)를 복원할까요?`)) {
+        startTimer(remain, title);
+      }
+    } else {
+      localStorage.removeItem('last_timer_end');
+      localStorage.removeItem('last_timer_title');
+    }
+  }
+});
+
+// ================== UI 자동 숨김 ==================
 let uiHideTimeout;
 function showUI() {
   document.querySelectorAll('.back-btn').forEach(btn => btn.classList.remove('hide-ui'));
@@ -340,7 +400,6 @@ function showUI() {
   document.querySelector('.topbar')?.classList.remove('hide-ui');
   document.body.classList.remove('hide-cursor');
 }
-
 function hideUI() {
   document.querySelectorAll('.back-btn').forEach(btn => btn.classList.add('hide-ui'));
   document.querySelector('.fullscreen-btn')?.classList.add('hide-ui');
@@ -348,23 +407,16 @@ function hideUI() {
   document.querySelector('.topbar')?.classList.add('hide-ui');
   document.body.classList.add('hide-cursor');
 }
-
 function resetUIHideTimer() {
   showUI();
   clearTimeout(uiHideTimeout);
-  // 2초 후 자동 숨김
   uiHideTimeout = setTimeout(hideUI, 1200);
 }
-
 document.addEventListener('mousemove', resetUIHideTimer);
 document.addEventListener('mousedown', resetUIHideTimer);
 document.addEventListener('keydown', resetUIHideTimer);
 
-document.addEventListener('DOMContentLoaded', () => {
-  resetUIHideTimer();
-});
-
-// ================== Firebase에서 종료시간 실시간 반영 ==================
+// ================== Firebase 동기화 ==================
 db.ref("sharedTimer").on("value", (snapshot) => {
   const data = snapshot.val();
   if (data && data.end) {
@@ -377,56 +429,40 @@ db.ref("sharedTimer").on("value", (snapshot) => {
 function fitTimerFontSize() {
   const box = document.querySelector('#timer-display.timer-decorated');
   if (!box) return;
-
-  // 임시로 아주 큰 폰트로 설정
   box.style.fontSize = '1000px';
-
-  // 박스와 텍스트 크기 측정
   const boxWidth = box.clientWidth;
   const boxHeight = box.clientHeight;
   const textWidth = box.scrollWidth;
   const textHeight = box.scrollHeight;
-
-  // 박스에 맞게 폰트 크기 계산 (상하좌우 여백 15%)
   const horizontalPadding = boxWidth * 0.15;
   const verticalPadding = boxHeight * 0.15;
   const availableWidth = boxWidth - horizontalPadding * 2;
   const availableHeight = boxHeight - verticalPadding * 2;
-
   const widthRatio = availableWidth / textWidth;
   const heightRatio = availableHeight / textHeight;
   const ratio = Math.min(widthRatio, heightRatio);
-
-  // 실제 폰트 크기 적용
   const newFontSize = 1000 * ratio;
   box.style.fontSize = `${newFontSize}px`;
 }
+window.addEventListener('resize', fitTimerFontSize);
 
-
-// ================== 마지막 타이머 종료 10분 전 알람 설정 ==================
-// ✅ NEW: 알람 트리거 공통 함수 (iOS/Android 분기)
+// ================== 10분 전 알람 ==================
 function triggerAlarm(endTime) {
-  // 종료 10분 전
   const alarmTime = new Date(endTime.getTime() - 10 * 60 * 1000);
-
   const pad = (n) => String(n).padStart(2, "0");
   const yyyy = alarmTime.getFullYear();
   const mm   = pad(alarmTime.getMonth() + 1);
   const dd   = pad(alarmTime.getDate());
   const hh   = pad(alarmTime.getHours());
   const min  = pad(alarmTime.getMinutes());
-
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
   if (isIOS) {
-    // iOS: 캘린더(.ics) 파일로 이벤트 추가 유도 (로컬 시간 사용)
     const dtStart = `${yyyy}${mm}${dd}T${hh}${min}00`;
     const endPlus1h = new Date(alarmTime.getTime());
     endPlus1h.setHours(endPlus1h.getHours() + 1);
     const hhEnd = pad(endPlus1h.getHours());
     const minEnd = pad(endPlus1h.getMinutes());
     const dtEnd = `${yyyy}${mm}${dd}T${hhEnd}${minEnd}00`;
-
     const icsContent = `BEGIN:VCALENDAR
     VERSION:2.0
     PRODID:-//Orange English//Timer//KR
@@ -437,7 +473,6 @@ function triggerAlarm(endTime) {
     DESCRIPTION:Orange English 타이머 종료 10분 전 알람
     END:VEVENT
     END:VCALENDAR`;
-
     const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -445,12 +480,9 @@ function triggerAlarm(endTime) {
     a.download = "alarm.ics";
     a.click();
     URL.revokeObjectURL(url);
-
     alert(`📅 iOS 캘린더에 ${parseInt(hh,10)}시 ${parseInt(min,10)}분 알람 이벤트를 추가하세요.`);
   } else {
-    // Android: 알람 앱 인텐트 시도 (기기/OS별 동작 상이할 수 있음)
-    const intentUrl =
-      `intent://alarm#Intent;scheme=clock;package=com.android.deskclock;S.hour=${parseInt(hh,10)};S.minutes=${parseInt(min,10)};end`;
+    const intentUrl = `intent://alarm#Intent;scheme=clock;package=com.android.deskclock;S.hour=${parseInt(hh,10)};S.minutes=${parseInt(min,10)};end`;
     try {
       window.location.href = intentUrl;
       alert(`⏰ 안드로이드 알람을 ${parseInt(hh,10)}:${min}로 설정합니다.`);
@@ -459,18 +491,12 @@ function triggerAlarm(endTime) {
     }
   }
 }
-
-// ✅ UPDATED: 기기 간 동기화 보완 (localStorage 없으면 Firebase에서 즉시 조회)
 function setAlarmFromLastTimer() {
   let lastEnd = localStorage.getItem("last_timer_end");
-
-  // 1) 로컬에 있으면 바로 사용
   if (lastEnd) {
     triggerAlarm(new Date(lastEnd));
     return;
   }
-
-  // 2) 로컬에 없으면 Firebase에서 1회 조회(fallback)
   db.ref("sharedTimer").once("value")
     .then((snapshot) => {
       const data = snapshot.val();
@@ -486,6 +512,7 @@ function setAlarmFromLastTimer() {
       alert("네트워크 또는 서버 오류로 알람을 불러오지 못했습니다.");
     });
 }
+
 
 
 // 화면 크기 바뀔 때마다 폰트 크기 재조정

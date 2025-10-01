@@ -52,7 +52,7 @@
   </header>
 
   <!-- 버전 정보 -->
-  <div class="version-info">v1.6.0 | 2025-09-23</div>
+  <div class="version-info">v1.6.3 - beta | 2025-10-02</div>
 
   <!-- 메인 화면 -->
   <div id="main" class="screen">
@@ -74,25 +74,22 @@
   <div id="notice" class="screen hidden">
     <div class="container">
       <div class="notice-header">
-       <h2>공지사항</h2>
+        <h2>공지사항</h2>
       </div>
 
-      <!-- 좌우 분할 레이아웃 -->
-      <div class="notice-layout">
-        <!-- 왼쪽: 기존 공지 텍스트 -->
-        <div id="notice-content" class="notice-content centered-text" role="region" aria-label="공지사항 내용">
-         <!-- JS에서 저장된 공지 불러와 표시됩니다. -->
-        </div>
-
-        <!-- 오른쪽: 추석 특강 이미지 -->
-        <div class="notice-image">
-         <!-- 로컬 파일 사용 시 -->
-          <img src="images/chuseok.png" alt="추석 특강 안내 이미지" />
-         <!-- 만약 외부 URL을 쓰고 싶다면 위 한 줄 대신 아래처럼:
-         <img src="https://example.com/your-image.png" alt="추석 특강 안내 이미지" />
-         -->
-       </div>
+    <!-- 좌우 분할 레이아웃.추석 끝나면 지울것. -->
+    <div class="notice-layout">
+      <!-- 왼쪽: 공지 내용 -->
+      <div id="notice-content" class="notice-content centered-text" role="region" aria-label="공지사항 내용">
+        <!-- JS에서 저장된 공지 불러와 표시합니다. -->
       </div>
+
+      <!-- 오른쪽: 추석 특강 이미지.추석 끝나면 지울것 -->
+      <div class="notice-image">
+        <!-- 로컬 파일 사용 시 -->
+        <img src="images/chuseok.png" alt="추석 특강 안내 이미지" />
+      </div>
+    </div>
 
       <div class="dday-box-bottom" role="group" aria-label="D-day 정보">
         <div id="today-date" class="dday-item"></div>
@@ -169,12 +166,16 @@
   <!-- JS -->
   <script src="script.js"></script>
 
+  <!-- 타이머 종료시 풀 오버레이 -->
+  <div id="end-overlay" class="hidden"></div>
+
   <script>
  if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js")
     .then(() => console.log("✅ Service Worker registered"))
     .catch(err => console.error("SW registration failed:", err));
  }
+
 </script>
 </body>
 </html>
