@@ -283,55 +283,105 @@ function updateDates() {
   if (suEl) suEl.innerHTML = `<span class="highlight">26수능</span><br>[D-${calcDday(dday2026Date)}]`;
 }
 
-// ====== 오렌지 비 이스터에그 ======
+/* ================== Easter Egg ================== */
 let titleClickCount = 0;
 let rainActive = false;
+
 function getActiveScreenId() {
   const active = document.querySelector('.screen:not(.hidden)');
   return active ? active.id : null;
 }
+
+/* 🍊 비 효과 */
 function createOrangeRain() {
-  if (rainActive) return;
-  if (getActiveScreenId() !== 'main') return;
+  if (rainActive || getActiveScreenId() !== 'main') return;
   rainActive = true;
+
   const rainContainer = document.createElement('div');
-  rainContainer.id = 'orange-rain-container';
-  rainContainer.style.position = 'fixed';
-  rainContainer.style.top = 0;
-  rainContainer.style.left = 0;
-  rainContainer.style.width = '100vw';
-  rainContainer.style.height = '100vh';
-  rainContainer.style.pointerEvents = 'none';
-  rainContainer.style.zIndex = 9999;
+  Object.assign(rainContainer.style, {
+    position: 'fixed',
+    top: 0, left: 0,
+    width: '100%', height: '100%',
+    pointerEvents: 'none',
+    zIndex: 9999,
+    overflow: 'hidden'
+  });
   document.body.appendChild(rainContainer);
 
   const emojis = ['🍊'];
-  const rainCount = 40;
-
-  for (let i = 0; i < rainCount; i++) {
+  for (let i = 0; i < 120; i++) {
     const drop = document.createElement('div');
-    drop.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    drop.textContent = emojis[0];
+    drop.classList.add("orange-drop"); // ✅ fill-mode 적용용 클래스
     drop.style.position = 'absolute';
-    drop.style.left = `${Math.random() * 98}vw`;
-    drop.style.top = `-${Math.random() * 20 + 5}vh`;
-    drop.style.fontSize = `${Math.random() * 32 + 32}px`;
-    drop.style.opacity = Math.random() * 0.5 + 0.5;
-    const duration = 2 + Math.random();
-    const delay = Math.random() * 0.7;
-    drop.style.transition = `top ${duration}s linear`;
-    drop.style.transitionDelay = `${delay}s`;
+    drop.style.left = `${Math.random() * 100}vw`;
+    drop.style.fontSize = `${Math.random() * 24 + 24}px`;
+    drop.style.animation = `orange-rain ${3 + Math.random() * 2}s linear ${Math.random() * 3}s infinite`;
+    drop.style.setProperty("--drift", `${Math.random() * 40 - 20}px`);
     rainContainer.appendChild(drop);
-
-    setTimeout(() => { drop.style.top = '100vh'; }, 50 + delay * 1000);
-    setTimeout(() => {
-      drop.remove();
-      if (i === rainCount - 1) {
-        rainActive = false;
-        if (rainContainer.parentNode) rainContainer.remove();
-      }
-    }, (duration + delay) * 1000 + 500);
   }
+
+  setTimeout(() => {
+    rainContainer.remove();
+    rainActive = false;
+  }, 10000);
 }
+
+/* 🍊 폭죽 효과 */
+function createOrangeExplosion() {
+  if (rainActive || getActiveScreenId() !== 'main') return;
+  rainActive = true;
+
+  const explosionContainer = document.createElement('div');
+
+  // ✅ 화면 랜덤 위치에서 터지도록 수정
+  const randTop = Math.random() * 80 + 10;   // 10%~90%
+  const randLeft = Math.random() * 80 + 10;  // 10%~90%
+  Object.assign(explosionContainer.style, {
+    position: 'fixed',
+    top: `${randTop}%`,
+    left: `${randLeft}%`,
+    width: '0', height: '0',
+    pointerEvents: 'none',
+    zIndex: 9999
+  });
+  document.body.appendChild(explosionContainer);
+
+  const emojis = ['🍊'];
+  for (let i = 0; i < 40; i++) {
+    const piece = document.createElement('div');
+    piece.textContent = emojis[0];
+    piece.style.position = 'absolute';
+    piece.style.fontSize = `${Math.random() * 20 + 20}px`;
+
+    const angle = Math.random() * 2 * Math.PI;
+    const distance = Math.random() * 200 + 100;
+    piece.style.setProperty("--dx", `${Math.cos(angle) * distance}px`);
+    piece.style.setProperty("--dy", `${Math.sin(angle) * distance}px`);
+    piece.style.animation = `orange-explosion 1s ease-out forwards`;
+
+    explosionContainer.appendChild(piece);
+  }
+
+  setTimeout(() => {
+    explosionContainer.remove();
+    rainActive = false;
+  }, 1200);
+}
+
+/* --- 제목 클릭 시 발동 --- */
+document.addEventListener("DOMContentLoaded", () => {
+  const title = document.querySelector('h1');
+  if (title) {
+    title.addEventListener('click', () => {
+      if (++titleClickCount === 5) {
+        if (Math.random() > 0.5) createOrangeRain();
+        else createOrangeExplosion();
+        titleClickCount = 0;
+      }
+    });
+  }
+});
 
 // ================== DOMContentLoaded ==================
 document.addEventListener("DOMContentLoaded", () => {
