@@ -563,39 +563,6 @@ body.dark-mode .timer-danger {
   transition: all 0.2s ease;
 }
 
-/* ===== 추석 끝나면 지울것! ===== */
-/* 공지사항 좌우 분할 레이아웃 */
-.notice-layout {
-  display: flex;
-  flex-direction: row;   /* ✅ 무조건 가로 배치 */
-  flex-wrap: nowrap;     /* ✅ 줄바꿈 안 되도록 */
-  gap: 20px;
-  margin-top: 1rem;
-}
-
-/* 왼쪽(공지 텍스트) */
-.notice-layout .notice-content {
-  flex: 1 1 50%;   /* 절반 */
-  min-width: 0;    /* ✅ 줄바꿈 방지 */
-}
-
-/* 오른쪽(이미지) */
-.notice-layout .notice-image {
-  flex: 1 1 50%;   /* 절반 */
-  min-width: 0;    /* ✅ 줄바꿈 방지 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.notice-layout .notice-image img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  object-fit: contain;  /* 이미지 비율 유지 */
-}
-
 /* 🍊 비 애니메이션 */
 @keyframes orange-rain {
   0%   { transform: translateY(-10vh) translateX(0); opacity: 1; }
