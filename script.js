@@ -47,10 +47,6 @@ function showScreen(id) {
     if (ta) ta.value = getSavedNotice();
   }
 
-  // ✅ 메인 화면이 아닐 때 자동 전체화면
-  if (id !== 'main' && !document.fullscreenElement) {
-    toggleFullscreen();
-  }
 }
 
 // ================== 공지 편집 액션 ==================
