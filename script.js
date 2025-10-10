@@ -273,7 +273,7 @@ function updateDates() {
 
   const dday2026Date = '2025-11-13';
   const mockEl = document.getElementById('dday-mock');
-  if (mockEl) mockEl.innerHTML = "🍊추석 연휴, 달빛보다 빛나는 공부!🍊<br>오렌지쌤이 여러분을 응원합니다";
+  if (mockEl) mockEl.innerHTML = "🍊수능 대박 기원!🍊<br>오렌지쌤이 여러분을 응원합니다";
 
   const suEl = document.getElementById('dday-2026');
   if (suEl) suEl.innerHTML = `<span class="highlight">26수능</span><br>[D-${calcDday(dday2026Date)}]`;
