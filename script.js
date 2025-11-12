@@ -274,7 +274,7 @@ function updateDates() {
   const ddaymockDate = '2026-03-24';
   const dday2026Date = '2026-11-19';
   const mockEl = document.getElementById('dday-mock');
-  if (mockEl) mockEl.innerHTML = "🍊수능 대박 기원!🍊<br>오렌지쌤이 여러분을 응원합니다";
+  if (mockEl) mockEl.innerHTML = `<span class="highlight">3모</span><br>[D-${calcDday(ddaymockDate)}]`;
 
   const suEl = document.getElementById('dday-2027');
   if (suEl) suEl.innerHTML = `<span class="highlight">27수능</span><br>[D-${calcDday(dday2027Date)}]`;
