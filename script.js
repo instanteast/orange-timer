@@ -272,6 +272,8 @@ function updateDates() {
   }
 
   const ddaymockDate = '2026-03-24';
+  /*const ddaymockDate = '2026-06-04';*/
+  /*const ddaymockDate = '2026-09-02';*/
   const dday2027Date = '2026-11-19';
   const mockEl = document.getElementById('dday-mock');
   if (mockEl) mockEl.innerHTML = `<span class="highlight">3모</span><br>[D-${calcDday(ddaymockDate)}]`;
