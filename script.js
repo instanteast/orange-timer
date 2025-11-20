@@ -297,7 +297,6 @@ function updateDates() {
       // 모든 모의고사가 지난 경우
       const last = MOCK_SCHEDULE[MOCK_SCHEDULE.length - 1];
       mockEl.innerHTML = `<span class="highlight">${last.label}</span><br>🍊수능 대박 기원!😊 오렌지쌤이 여러분을 응원합니다`;
-      // 필요하면 위 문구를 "끝!" 이나 "수고했어요!" 등으로 바꿔도 됨
     }
   }
 
