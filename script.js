@@ -253,9 +253,9 @@ function getDayName(date) {
 
 // ✅ 모의고사 일정 목록 (원하는 만큼 추가/수정 가능)
 const MOCK_SCHEDULE = [
-  { label: '3모', date: '2026-03-24' },
-  { label: '6모', date: '2026-06-04' },
-  { label: '9모', date: '2026-09-02' },
+  { label: '3모', date: '2020-03-24' },
+  { label: '6모', date: '2020-06-04' },
+  { label: '9모', date: '2020-09-02' },
 ];
 
 function updateDates() {
