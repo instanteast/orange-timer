@@ -156,27 +156,48 @@ h2 {
   flex-wrap: wrap;
   margin-top: 2rem;
 }
-.orange-btn {
+
+/* ✅ 공통 버튼 스타일 (orange-btn + primary-btn) */
+.orange-btn,
+.primary-btn {
   background: var(--brand);
   border: 1px solid var(--brand-strong);
   border-radius: var(--radius);
   min-width: 200px;
-  padding: 16px 20px;
-  font-size: clamp(18px, 3.2vw, 24px);
+  padding: 12px 20px;
+  font-size: clamp(18px, 3.2vw, 22px);
   font-weight: 700;
   color: #fff;
   cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.2s ease, filter 0.2s ease;
   box-shadow: var(--shadow);
-}
-.orange-btn:focus-visible { outline: 3px solid rgba(0,0,0,0.25); outline-offset: 2px; }
-.orange-btn:hover {   
-  transform: translateY(-3px) scale(1.05);
-  filter: brightness(1.05);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.15); 
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease,
+    background 0.15s ease;
 }
 
-body.dark-mode .orange-btn {
+.orange-btn:focus-visible,
+.primary-btn:focus-visible {
+  outline: 3px solid rgba(0,0,0,0.25);
+  outline-offset: 2px;
+}
+
+.orange-btn:hover,
+.primary-btn:hover {   
+  transform: translateY(-2px) scale(1.03);
+  filter: brightness(1.06);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18); 
+}
+
+.orange-btn:active,
+.primary-btn:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+}
+
+body.dark-mode .orange-btn,
+body.dark-mode .primary-btn {
   background: var(--brand);
   color: #fff;
   border: 1px solid var(--brand-strong);
@@ -232,13 +253,31 @@ body.dark-mode .orange-btn {
   color: var(--text);
 }
 
+/* ✅ 모든 모의고사 지난 뒤 응원 메시지용 스타일 */
+.dday-box-bottom .dday-message {
+  background: linear-gradient(135deg, #ff7a00 0%, #ffb347 40%, #ffd194 100%);
+  color: #fff;
+  border: none;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.22);
+}
+
+body.dark-mode .dday-box-bottom .dday-message {
+  background: linear-gradient(135deg, #ff9d3b 0%, #ffb347 40%, #ffd194 100%);
+  color: #111;
+}
+
 /* ===== 강조 ===== */
 .highlight {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--brand);
   font-weight: 700;
-  background: rgba(255, 122, 0, 0.08);
-  padding: 0 4px;
-  border-radius: 4px;
+  background: rgba(255, 122, 0, 0.1);
+  padding: 2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  font-size: 0.95em;
 }
 
 /* ===== 타이머 ===== */
@@ -436,17 +475,8 @@ input[type="number"] {
   background: var(--card);
   color: var(--text);
 }
-.primary-btn {
-  background: var(--brand);
-  color: #fff;
-  border: 1px solid var(--brand-strong);
-  border-radius: 12px;
-  padding: 10px 16px;
-  font-size: clamp(18px, 3.4vw, 22px);
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: var(--shadow);
-}
+
+/* secondary-btn은 기존 그대로 유지 */
 .secondary-btn {
   background: transparent;
   color: var(--text);
@@ -552,7 +582,7 @@ body.dark-mode .timer-danger {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1500; /* topbar는 z-index: 2001 이상으로 올려주세요 */
+  z-index: 3000; /* ✅ topbar보다 위로 */
 }
 
 /* 텍스트 에어리어 포커스 스타일 */
@@ -576,4 +606,25 @@ body.dark-mode .timer-danger {
 @keyframes orange-explosion {
   0%   { transform: translate(0,0) scale(1); opacity: 1; }
   100% { transform: translate(var(--dx), var(--dy)) scale(0.8); opacity: 0; }
+}
+
+/* ✅ 모바일에서 타이머 영역 조금 더 크게 */
+@media (max-width: 600px) {
+  .timer-container {
+    height: 70vh;
+    padding: 0 8px;
+  }
+
+  .time-hint {
+    width: 90%;
+  }
+}
+
+/* ✅ 모션 민감 사용자 배려 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
