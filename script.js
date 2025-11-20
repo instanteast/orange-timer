@@ -296,6 +296,7 @@ function updateDates() {
     } else {
       // 모든 모의고사가 지난 경우
       const last = MOCK_SCHEDULE[MOCK_SCHEDULE.length - 1];
+      mockEl.classList.add('dday-message');
       mockEl.innerHTML = `❤️수능 대박 기원!😊 <br> 🍊오렌지쌤이 여러분을 응원합니다`;
     }
   }
