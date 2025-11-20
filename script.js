@@ -251,6 +251,13 @@ function getDayName(date) {
   return days[date.getDay()];
 }
 
+// ✅ 모의고사 일정 목록 (원하는 만큼 추가/수정 가능)
+const MOCK_SCHEDULE = [
+  { label: '3모', date: '2026-03-24' },
+  { label: '6모', date: '2026-06-04' },
+  { label: '9모', date: '2026-09-02' },
+];
+
 function updateDates() {
   const today = new Date();
 
@@ -271,16 +278,35 @@ function updateDates() {
     return diffDays;
   }
 
-  const ddaymockDate = '2026-03-24';
-  /*const ddaymockDate = '2026-06-04';*/
-  /*const ddaymockDate = '2026-09-02';*/
-  const dday2027Date = '2026-11-19';
-  const mockEl = document.getElementById('dday-mock');
-  if (mockEl) mockEl.innerHTML = `<span class="highlight">3모</span><br>[D-${calcDday(ddaymockDate)}]`;
+  // ✅ 아직 안 지난 모의고사 중에서 가장 가까운 것 찾기
+  let nextMock = null;
+  for (const item of MOCK_SCHEDULE) {
+    const d = calcDday(item.date);
+    if (d >= 0) {
+      nextMock = { ...item, dday: d };
+      break;
+    }
+  }
 
+  const mockEl = document.getElementById('dday-mock');
+  if (mockEl) {
+    if (nextMock) {
+      // 아직 남은 모의고사가 있는 경우 → 그 시험 기준으로 D-day 표시
+      mockEl.innerHTML = `<span class="highlight">${nextMock.label}</span><br>[D-${nextMock.dday}]`;
+    } else {
+      // 모든 모의고사가 지난 경우
+      const last = MOCK_SCHEDULE[MOCK_SCHEDULE.length - 1];
+      mockEl.innerHTML = `<span class="highlight">${last.label}</span><br>🍊수능 대박 기원!😊 오렌지쌤이 여러분을 응원합니다`;
+      // 필요하면 위 문구를 "끝!" 이나 "수고했어요!" 등으로 바꿔도 됨
+    }
+  }
+
+  // ✅ 수능 D-Day (그대로 사용)
+  const dday2027Date = '2026-11-19';
   const suEl = document.getElementById('dday-2027');
   if (suEl) suEl.innerHTML = `<span class="highlight">27수능</span><br>[D-${calcDday(dday2027Date)}]`;
 }
+
 
 /* ================== Easter Egg ================== */
 let titleClickCount = 0;
